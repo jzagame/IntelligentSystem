@@ -70,7 +70,21 @@ public class main extends Agent{
 //		deliveryAgent.PrintAllAgentConstraint();
 //		masterRoutingAgent.PrintMRADetail();
 		ReceiverAgent mra = new ReceiverAgent();
-		mra.setAgent(this);
+		mra.setAgent(this); // this will let MRA start cyclic to keep listening
+		
+		
+//		AgentListener agentListener = new AgentListener();
+//		for(int j=0;j<temp.length;j++) {
+//			ReceiverAgent2 tempRA = new ReceiverAgent2();
+//			agentListener.setReceiverAgent(tempRA);
+//		}
+//		
+//		List<ReceiverAgent2> x1 = agentListener.getReceiverAgent2();
+//		ReceiverAgent2[] temp1 = x1.toArray(new ReceiverAgent2[x1.size()]);
+//		for(int j=0;j<temp1.length;j++) {
+//			temp1[j].setAgent(temp[j].getAgent());
+//		}
+		
 		
 		try {
 		    // open file in read mode
@@ -124,6 +138,6 @@ public class main extends Agent{
 		} catch (IOException ex) {
 		    ex.printStackTrace();
 		}
-		new GUI(deliveryAgent,masterRoutingAgent,distanceLocation);
+		new GUI(deliveryAgent,masterRoutingAgent,distanceLocation,fullLocation);
 	}
 }

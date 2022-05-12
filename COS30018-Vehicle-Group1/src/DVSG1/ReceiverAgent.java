@@ -32,6 +32,7 @@ public class ReceiverAgent extends Agent{
 					// Print out message content
 					System.out.println(AgentName.getLocalName() + ": Received Message From " + 
 					msg.getSender().getLocalName() + " [ Total Capacity (num) : " + msg.getContent() + " ]");
+					
 				}
 				// Continue listening
 				block();

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,15 +24,17 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import G1.MapLocation;
+
 public class GUI {
 	DeliveryAgent da = new DeliveryAgent();
 	DistanceLocation dl = new DistanceLocation();
+	FullLocation fl = new FullLocation();
 	
-	
-	
-	GUI(DeliveryAgent daa,MasterRoutingAgent mra,DistanceLocation dll){
+	GUI(DeliveryAgent daa,MasterRoutingAgent mra,DistanceLocation dll,FullLocation fll){
 		da = daa;
 		dl = dll;
+		fl = fll;
 		UIDeliveryAgent(mra);
 		UIMasterRoutingAgent(mra);
 	}
@@ -70,8 +73,10 @@ public class GUI {
 							msg.setContent(txt[i].getText());
 							temp[i].setTotalItem(Integer.valueOf(txt[i].getText()));
 							da = new DeliveryAgent(Arrays.asList(temp));
+//							msg.setSender(temp[1].getAgent().getAID());
 							msg.addReceiver(mra.getMRA().getAID());
 							temp[i].getAgent().send(msg);
+							System.out.println(msg);
 							break;
 						}
 					}
@@ -83,18 +88,22 @@ public class GUI {
 	
 	
 	public void UIMasterRoutingAgent(MasterRoutingAgent mra) {
+		DisplayFullLocationMap displayFullLocationMap = new DisplayFullLocationMap(fl);
+		
 		JFrame f = new JFrame(mra.getMRA().getName());
 		JPanel mainPanel = new JPanel(new BorderLayout(10,10));
 		JPanel panel = new JPanel();
-		JPanel panelMap = new JPanel();
+		JPanel panelMap = new JPanel(new GridLayout(100,100));
 		JButton btnGenerateRoute = new JButton("Generate Route");
 		JButton btnSend = new JButton("Send Route");
+		JButton btnTest = new JButton("Test Position");
 		panel.add(btnGenerateRoute);
 		panel.add(btnSend);
+		
 		mainPanel.add(panel,BorderLayout.NORTH);
-		mainPanel.add(panelMap,BorderLayout.SOUTH);
+		mainPanel.add(displayFullLocationMap,BorderLayout.CENTER);
 		f.add(mainPanel);
-		f.setSize(1200,600);
+		f.setSize(1200,700);
 		f.show();
 		
 		
@@ -106,16 +115,12 @@ public class GUI {
 //				panelMap.removeAll();
 //				panelMap.revalidate();
 				
+				
 //				try { //Use TO generate My location 
 //					FileWriter r = new FileWriter("lib/location.txt");
 //					for(int i=0;i<100;i++) {
-//						String temp = "L" + (i+1) + ":";
-//						for(int j=0;j<2;j++) {
-//							temp += getRandomNumber();;
-//							if(j+1 != 2) {
-//								temp += ",";
-//							}
-//						}
+//						String temp = "L" + (i+1) + ":" 
+//								+ getRandomNumberX() + "," + getRandomNumberY();
 //						r.write(temp);
 //						r.write("\r\n");
 //					}
@@ -129,10 +134,21 @@ public class GUI {
 		});
 	}
 	
-	public String getRandomNumber() {
-		int x = ThreadLocalRandom.current().nextInt(0,1000);
-		return String.valueOf(x);
+//	public String getRandomNumberX() {
+//		int x = ThreadLocalRandom.current().nextInt(0,800);
+//		return String.valueOf(x);
+//	}
+//	
+//	public String getRandomNumberY() {
+//		int x = ThreadLocalRandom.current().nextInt(0,500);
+//		return String.valueOf(x);
+//	}
+	
+	public void circle(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawOval(10,10,10,10);
 	}
-
+	
+	
 	
 }

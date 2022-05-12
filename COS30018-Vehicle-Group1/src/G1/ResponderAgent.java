@@ -7,6 +7,12 @@ import jade.lang.acl.*;
 
 public class ResponderAgent extends Agent{
 	
+	static Agent agentName;
+	ResponderAgent(){
+		agentName = null;
+	}
+	
+	
 	protected void setup() {
 		addBehaviour(new CyclicBehaviour(this) {
 			public void action() {
