@@ -25,11 +25,13 @@ import javax.swing.JTextField;
 
 public class GUI {
 	DeliveryAgent da = new DeliveryAgent();
+	DistanceLocation dl = new DistanceLocation();
 	
 	
 	
-	GUI(DeliveryAgent daa,MasterRoutingAgent mra){
+	GUI(DeliveryAgent daa,MasterRoutingAgent mra,DistanceLocation dll){
 		da = daa;
+		dl = dll;
 		UIDeliveryAgent(mra);
 		UIMasterRoutingAgent(mra);
 	}
@@ -89,9 +91,6 @@ public class GUI {
 		JButton btnSend = new JButton("Send Route");
 		panel.add(btnGenerateRoute);
 		panel.add(btnSend);
-		panel.setBackground(Color.black);
-		panel.setSize(1150,50);
-		panelMap.setSize(1150,500);
 		mainPanel.add(panel,BorderLayout.NORTH);
 		mainPanel.add(panelMap,BorderLayout.SOUTH);
 		f.add(mainPanel);

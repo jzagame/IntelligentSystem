@@ -1,29 +1,37 @@
 package DVSG1;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AvailableLocation {
-	String[] locationName;
-	int[][] xAndY;
+	String locationName;
+	int x;
+	int y;
 	
 	AvailableLocation(){
 		locationName = null;
-		xAndY = null;
+		x = 0;
+		y = 0;
 	}
 	
-	public int[][] getXYLocation(){
-		return xAndY;
+	public int getLocationX(){
+		return x;
 	}
 	
-	public void setXYLocation(int[] temp,int n) {
-		for(int i=0;i<temp.length;i++) {
-			xAndY[n][i] = temp[i];
-		}
+	public int getLocationY(){
+		return y;
 	}
 	
-	public String[] getLocationName() {
+	public void setXYLocation(int tempx,int tempy) {
+		x = tempx;
+		y = tempy;
+	}
+	
+	public String getLocationName() {
 		return locationName;
 	}
 	
-	public void setLocationName(String temp,int n) {
-		locationName[n] = temp;
+	public void setLocationName(String temp) {
+		locationName = temp;
 	}
 }
