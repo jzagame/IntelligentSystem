@@ -21,8 +21,8 @@ public class main extends Agent{
 	
 	DeliveryAgent deliveryAgent = new DeliveryAgent(); 
 	MasterRoutingAgent masterRoutingAgent = new MasterRoutingAgent();
-	FullLocation fullLocation = new FullLocation();
-	DistanceLocation distanceLocation = new DistanceLocation();
+	LocationAvailable fullLocation = new LocationAvailable();
+	LocationDistance distanceLocation = new LocationDistance();
 	protected void setup() {
 		Object[] args = getArguments(); // get Arguments pass from the command (DA name)
 		Runtime runtime = Runtime.instance();
@@ -93,7 +93,7 @@ public class main extends Agent{
 		    String line;
 		    int i=0;
 		    while ((line = file.readLine()) != null) {
-		    	AvailableLocation availableLocation = new AvailableLocation();
+		    	LocationDetail availableLocation = new LocationDetail();
 		        String[] first = line.toString().split(":");
 		        availableLocation.setLocationName(first[0]);
 		        String[] second = first[1].split(",");
@@ -104,30 +104,9 @@ public class main extends Agent{
 		    }
 		 // close the file
 		    file.close();
-		    List<AvailableLocation> fL = fullLocation.getAvailableLocationDetail();
-		    AvailableLocation[] aL = fL.toArray(new AvailableLocation[fL.size()]);
-		    for(int k=0;k<aL.length;k++) {
-		    	int currentX = aL[k].getLocationX();
-		    	int currentY = aL[k].getLocationY();
-		    	for(int l=0;l<aL.length;l++) {
-		    		int compareX = aL[l].getLocationX();
-		    		int compareY = aL[l].getLocationY();
-		    		int totalDistance = 0;
-		    		if(currentX >= compareX) {
-		    			totalDistance += (currentX-compareX);
-		    		}else {
-		    			totalDistance += (compareX-currentX);
-		    		}
-		    		if(currentY >= compareY) {
-		    			totalDistance += (currentY - compareY);
-		    		}else {
-		    			totalDistance += (compareY - currentY);
-		    		}
-		    		distanceLocation.setDistanLocation(totalDistance, k, l);
-		    	}
-		    }
+		    distanceLocation.calculateLocationDistance(fullLocation.getAvailableLocationDetail());
 		    
-//		    System.out.println(distanceLocation.getOneDistanceLoation(0, 5));
+		    System.out.println(distanceLocation.getOneDistanceLoation(0, 2));
 //		    System.out.println(test1[4].getLocationName() + ":" + test1[4].getLocationX() + "," + test1[4].getLocationY());
 		    
 		    

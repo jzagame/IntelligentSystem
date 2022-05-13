@@ -2,6 +2,8 @@ package DVSG1;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -24,14 +27,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import G1.MapLocation;
-
 public class GUI {
 	DeliveryAgent da = new DeliveryAgent();
-	DistanceLocation dl = new DistanceLocation();
-	FullLocation fl = new FullLocation();
+	LocationDistance dl = new LocationDistance();
+	LocationAvailable fl = new LocationAvailable();
 	
-	GUI(DeliveryAgent daa,MasterRoutingAgent mra,DistanceLocation dll,FullLocation fll){
+	GUI(DeliveryAgent daa,MasterRoutingAgent mra,LocationDistance dll,LocationAvailable fll){
 		da = daa;
 		dl = dll;
 		fl = fll;
@@ -88,61 +89,58 @@ public class GUI {
 	
 	
 	public void UIMasterRoutingAgent(MasterRoutingAgent mra) {
-		DisplayFullLocationMap displayFullLocationMap = new DisplayFullLocationMap(fl);
+		DisplayFullLocationMap displayFullLocationMap = new DisplayFullLocationMap(fl.getAvailableLocationDetail());
 		
 		JFrame f = new JFrame(mra.getMRA().getName());
-		JPanel mainPanel = new JPanel(new BorderLayout(10,10));
-		JPanel panel = new JPanel();
-		JPanel panelMap = new JPanel(new GridLayout(100,100));
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		JPanel subPanel = new JPanel(new GridLayout(0,1));
+		subPanel.setPreferredSize(new Dimension(860,100));
+		JPanel panelBtn = new JPanel();
+		JPanel panelTxt = new JPanel();
+		JTextField txtCity = new JTextField("Enter Location Name" ,30);
+		JTextField txtItemNum = new JTextField("Enter Number Parcel" ,30);
 		JButton btnGenerateRoute = new JButton("Generate Route");
 		JButton btnSend = new JButton("Send Route");
-		JButton btnTest = new JButton("Test Position");
-		panel.add(btnGenerateRoute);
-		panel.add(btnSend);
-		
-		mainPanel.add(panel,BorderLayout.NORTH);
+		panelBtn.add(btnGenerateRoute);
+		panelBtn.add(btnSend);
+		panelTxt.add(txtCity);
+		panelTxt.add(txtItemNum);
+		subPanel.add(panelTxt);
+		subPanel.add(panelBtn);
+		mainPanel.add(subPanel,BorderLayout.NORTH);
 		mainPanel.add(displayFullLocationMap,BorderLayout.CENTER);
 		f.add(mainPanel);
-		f.setSize(1200,700);
+		f.setSize(860,700);
 		f.show();
+		
+		btnGenerateRoute.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 		
 		
 		btnSend.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ClusteringCalculation Cc = new ClusteringCalculation();
 				// TODO Auto-generated method stub
-				da.PrintAllAgentConstraint();
-//				panelMap.removeAll();
-//				panelMap.revalidate();
+				for(LocationDetail l:fl.getAvailableLocationDetail()) {
+					ClusterGroupInfo g = new ClusterGroupInfo(dl);
+					g.findNearestLocation(fl.getAvailableLocationDetail(), l);
+					Cc.setClusterGroupInfo(g);
+				}
 				
 				
-//				try { //Use TO generate My location 
-//					FileWriter r = new FileWriter("lib/location.txt");
-//					for(int i=0;i<100;i++) {
-//						String temp = "L" + (i+1) + ":" 
-//								+ getRandomNumberX() + "," + getRandomNumberY();
-//						r.write(temp);
-//						r.write("\r\n");
-//					}
-//					r.close();
-//				} catch (IOException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
 			}
 			
 		});
 	}
 	
-//	public String getRandomNumberX() {
-//		int x = ThreadLocalRandom.current().nextInt(0,800);
-//		return String.valueOf(x);
-//	}
-//	
-//	public String getRandomNumberY() {
-//		int x = ThreadLocalRandom.current().nextInt(0,500);
-//		return String.valueOf(x);
-//	}
 	
 	public void circle(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;

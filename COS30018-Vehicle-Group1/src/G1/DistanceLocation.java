@@ -1,4 +1,4 @@
-package DVSG1;
+package G1;
 
 public class DistanceLocation {
 	

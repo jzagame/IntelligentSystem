@@ -1,14 +1,11 @@
 package DVSG1;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class AvailableLocation {
+public class LocationDetail {
 	String locationName;
 	int x;
 	int y;
 	
-	AvailableLocation(){
+	LocationDetail(){
 		locationName = null;
 		x = 0;
 		y = 0;
