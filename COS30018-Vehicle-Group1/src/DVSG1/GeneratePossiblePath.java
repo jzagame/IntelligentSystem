@@ -46,7 +46,7 @@ public class GeneratePossiblePath {
 	
 	public List<LocationDetail> InnerGenerateClusterPossiblePath(List<LocationDetail> outerLoopList,
 			List<LocationDetail> InnerLoopList,int ParcelConstraint,int size){
-		System.out.println(outerLoopList.size() + " : " + InnerLoopList.size());
+//		System.out.println(outerLoopList.size() + " : " + InnerLoopList.size());
 		int total = 0;
 		List<LocationDetail> temp = new ArrayList<LocationDetail>(); //create a temp list for storing current possible path
 		for(LocationDetail ld:InnerLoopList) { // loop to calculate current list total path 
