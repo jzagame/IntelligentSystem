@@ -28,6 +28,7 @@ public class GeneratePossiblePath {
 				if(outerLoopList.size() == size) {
 					PathAvailable possiblePath = new PathAvailable();
 					possiblePath.setPathDetail(outerLoopList);
+					possiblePath.calculateLocationDistance(outerLoopList);
 					ga.add(possiblePath);
 					System.out.println(ga.size()); //uncommand this see this result
 					return null;
@@ -64,6 +65,7 @@ public class GeneratePossiblePath {
 				InnerLoopList.remove(rand.nextInt(i-1));
 				PathAvailable possiblePath = new PathAvailable();
 				possiblePath.setPathDetail(temp);
+				possiblePath.calculateLocationDistance(temp);
 				ga.add(possiblePath);
 				InnerGenerateClusterPossiblePath(outerLoopList,InnerLoopList,ParcelConstraint);
 			}
