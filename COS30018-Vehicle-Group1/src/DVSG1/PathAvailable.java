@@ -59,15 +59,15 @@ public class PathAvailable {
 	
 	public void PrintPathLocation() {
 		for(LocationDetail x:pathAvailable) {
-			System.out.print(x.getLocationName() + " ");
+			System.out.print(x.getLocationName() + "[" + x.getTotalParcel() + "] ");
 		}
-		System.out.println("");
-		for(int i=0;i<distanceMatrix.length;i++) {
-			for(int j=0;j<distanceMatrix[i].length;j++) {
-				System.out.print(" | " + distanceMatrix[i][j] + " | ");
-			}
-			System.out.println("");
-		}
+//		System.out.println("");
+//		for(int i=0;i<distanceMatrix.length;i++) {
+//			for(int j=0;j<distanceMatrix[i].length;j++) {
+//				System.out.print(" | " + distanceMatrix[i][j] + " | ");
+//			}
+//			System.out.println("");
+//		}
 	}
 	
 	

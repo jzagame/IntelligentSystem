@@ -24,7 +24,7 @@ public class PathAvailableForEachCluster {
 			System.out.println("Available Path : " +
 			x.getPossiblePathOfEachCluster().size());
 			for(int i=0;i<x.getPossiblePathOfEachCluster().size();i++) {
-				x.getPossiblePathOfEachCluster().get(i).PrintPathLocation();;
+				x.getPossiblePathOfEachCluster().get(i).PrintPathLocation();
 				System.out.println("");
 			}
 			

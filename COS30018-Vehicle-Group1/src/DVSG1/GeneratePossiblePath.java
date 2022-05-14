@@ -38,13 +38,15 @@ public class GeneratePossiblePath {
 				}
 			}
 		}
-		GenerateClusterPossiblePath(outerLoopList,InnerGenerateClusterPossiblePath(outerLoopList,
-				InnerLoopList,ParcelConstraint),ParcelConstraint,size);
+		InnerGenerateClusterPossiblePath(outerLoopList,InnerLoopList,ParcelConstraint,size);
+//		GenerateClusterPossiblePath(outerLoopList,InnerGenerateClusterPossiblePath(outerLoopList,
+//				InnerLoopList,ParcelConstraint),ParcelConstraint,size);
 		return null;
 	}
 	
 	public List<LocationDetail> InnerGenerateClusterPossiblePath(List<LocationDetail> outerLoopList,
-			List<LocationDetail> InnerLoopList,int ParcelConstraint){
+			List<LocationDetail> InnerLoopList,int ParcelConstraint,int size){
+		System.out.println(outerLoopList.size() + " : " + InnerLoopList.size());
 		int total = 0;
 		List<LocationDetail> temp = new ArrayList<LocationDetail>(); //create a temp list for storing current possible path
 		for(LocationDetail ld:InnerLoopList) { // loop to calculate current list total path 
@@ -56,23 +58,27 @@ public class GeneratePossiblePath {
 		total = 0;
 		for(int i=0;i<InnerLoopList.size();i++) {
 			total += InnerLoopList.get(i).getTotalParcel();
-			temp.add(InnerLoopList.get(i));
+			if(total <= ParcelConstraint) {
+				temp.add(InnerLoopList.get(i));
+			}
 			if(total >= ParcelConstraint) {
-				Random rand = new Random();
-				if(total < 50) {
-					temp.remove(i-1);
-				}
-				InnerLoopList.remove(rand.nextInt(i-1));
+				InnerLoopList.remove(1);
 				PathAvailable possiblePath = new PathAvailable();
 				possiblePath.setPathDetail(temp);
 				possiblePath.calculateLocationDistance(temp);
 				ga.add(possiblePath);
-				InnerGenerateClusterPossiblePath(outerLoopList,InnerLoopList,ParcelConstraint);
+				InnerGenerateClusterPossiblePath(outerLoopList,InnerLoopList,ParcelConstraint,size);
 			}
+			
 		}
 		total = 0;
 		for(LocationDetail ld:outerLoopList) {
 			total += ld.getTotalParcel();
+		}
+		if(total > ParcelConstraint) {
+			outerLoopList.remove(0);
+			List<LocationDetail> newInner = new ArrayList<LocationDetail>(outerLoopList);
+			GenerateClusterPossiblePath(outerLoopList,newInner,ParcelConstraint,size);
 		}
 
 		return null;

@@ -123,7 +123,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				for(int i=0;i<fl.getAvailableLocationDetail().size();i++) {
 					Random rand = new Random();
-					fl.getAvailableLocationDetail().get(i).setTotalParcel(rand.nextInt(10));// give random parcel for every location 
+					fl.getAvailableLocationDetail().get(i).setTotalParcel(rand.nextInt(9) + 1);// give random parcel for every location 
 				}
 			}
 			
@@ -143,7 +143,8 @@ public class GUI {
 //					x.PrintClusterDetail();
 					GeneratePossiblePath ga = new GeneratePossiblePath();
 					PossiblePathOfEachCluster ppoec = new PossiblePathOfEachCluster();
-					ga.GenerateClusterPossiblePath(x.getListLocationInCluster(),
+					List<LocationDetail> temp = new ArrayList<LocationDetail>(x.getListLocationInCluster());
+					ga.GenerateClusterPossiblePath(temp,
 							x.getListLocationInCluster(), 70,
 							x.getListLocationInCluster().size());
 					ppoec.setPossiblePathOfEachCluster(ga.getLocationAvailableForEachCluster(),x.getClusterName());
