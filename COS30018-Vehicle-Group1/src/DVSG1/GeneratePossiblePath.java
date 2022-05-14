@@ -5,19 +5,18 @@ import java.util.List;
 import java.util.Random;
 
 public class GeneratePossiblePath {
-	LocationAvailable ga;
-	
+	List<PathAvailable> ga;
 	
 	GeneratePossiblePath(){
-		ga = new LocationAvailable();
+		ga = new ArrayList<PathAvailable>();
 	}
 	
-	public LocationAvailable getLocationAvailableForEachCluster() {
+	public List<PathAvailable> getLocationAvailableForEachCluster() {
 		return ga;
 	}
 	
-	public List<LocationDetail> GenerateClusterPossiblePath(List<LocationDetail> outerLoopList,
-			List<LocationDetail> InnerLoopList,List<LocationDetail> possiblePath,int ParcelConstraint,int size) {
+	public List<LocationAvailable> GenerateClusterPossiblePath(List<LocationDetail> outerLoopList,
+			List<LocationDetail> InnerLoopList,int ParcelConstraint,int size) {
 		int total = 0;
 		
 		for(LocationDetail ld:outerLoopList) {
@@ -27,22 +26,24 @@ public class GeneratePossiblePath {
 		if(total <= ParcelConstraint) {
 			if(total <= ParcelConstraint) {
 				if(outerLoopList.size() == size) {
-//					System.out.println(possiblePath.size() + " <-- this gay"); // check for this gay error
-					ga.setListAvailableLocation(outerLoopList);
-					return outerLoopList;
+					PathAvailable possiblePath = new PathAvailable();
+					possiblePath.setPathDetail(outerLoopList);
+					ga.add(possiblePath);
+					System.out.println(ga.size()); //uncommand this see this result
+					return null;
 				}else {
-//					System.out.println(possiblePath.size()); //uncommand this see this result
-					ga.setListAvailableLocation(possiblePath);
-					return possiblePath;
+					System.out.println(ga.size()); //uncommand this see this result
+					return null;
 				}
 			}
 		}
 		GenerateClusterPossiblePath(outerLoopList,InnerGenerateClusterPossiblePath(outerLoopList,
-				InnerLoopList,possiblePath,ParcelConstraint),possiblePath,ParcelConstraint,size);
+				InnerLoopList,ParcelConstraint),ParcelConstraint,size);
 		return null;
 	}
 	
-	public List<LocationDetail> InnerGenerateClusterPossiblePath(List<LocationDetail> outerLoopList,List<LocationDetail> InnerLoopList,List<LocationDetail> possiblePath,int ParcelConstraint){
+	public List<LocationDetail> InnerGenerateClusterPossiblePath(List<LocationDetail> outerLoopList,
+			List<LocationDetail> InnerLoopList,int ParcelConstraint){
 		int total = 0;
 		List<LocationDetail> temp = new ArrayList<LocationDetail>(); //create a temp list for storing current possible path
 		for(LocationDetail ld:InnerLoopList) { // loop to calculate current list total path 
@@ -61,8 +62,10 @@ public class GeneratePossiblePath {
 					temp.remove(i-1);
 				}
 				InnerLoopList.remove(rand.nextInt(i-1));
-				possiblePath.addAll(temp);
-				InnerGenerateClusterPossiblePath(outerLoopList,InnerLoopList,possiblePath,ParcelConstraint);
+				PathAvailable possiblePath = new PathAvailable();
+				possiblePath.setPathDetail(temp);
+				ga.add(possiblePath);
+				InnerGenerateClusterPossiblePath(outerLoopList,InnerLoopList,ParcelConstraint);
 			}
 		}
 		total = 0;

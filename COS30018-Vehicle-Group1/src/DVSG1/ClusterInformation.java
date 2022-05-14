@@ -49,6 +49,10 @@ public class ClusterInformation {
 		System.out.println("Cluster Name : " + clusterName);
 		System.out.println("Total Parcel In Cluster : " + TotalParcelInCluster);
 		System.out.println("Total Customer In Cluster : " + locationRecord.size());
+		for(int i=0;i<locationRecord.size();i++) {
+			System.out.print(locationRecord.get(i).getLocationName());
+		}
+		System.out.println("");
 	}
 	
 }

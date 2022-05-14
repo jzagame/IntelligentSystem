@@ -134,22 +134,35 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				ClusterAvailable ca = new ClusterAvailable();
-				PossiblePathOfEachCluster ppoec = new PossiblePathOfEachCluster();
+				PathAvailableForEachCluster pafec = new PathAvailableForEachCluster();
 				ca.CreateDefaultClusterAvailable(fl.getAvailableLocationDetail());
 				 
 				System.out.println("-----------------------------------------------------------------------");
-				List<LocationDetail> testld = new ArrayList<LocationDetail>();
 				for(ClusterInformation x:ca.getClusterAvaiableSorted()) { 
 					//command here for backup, just for check every cluster detail
-					GeneratePossiblePath ga = new GeneratePossiblePath();
 //					x.PrintClusterDetail();
+					GeneratePossiblePath ga = new GeneratePossiblePath();
+					PossiblePathOfEachCluster ppoec = new PossiblePathOfEachCluster();
 					ga.GenerateClusterPossiblePath(x.getListLocationInCluster(),
-							x.getListLocationInCluster(), testld, 70,
+							x.getListLocationInCluster(), 70,
 							x.getListLocationInCluster().size());
-					ppoec.setPossiblePathOfEachCluster(ga.getLocationAvailableForEachCluster());
+					ppoec.setPossiblePathOfEachCluster(ga.getLocationAvailableForEachCluster(),x.getClusterName());
+					pafec.setAllPossiblePathForCluster(ppoec);
 				}
 				
-//				System.out.println(ppoec.getPossiblePathOfEachCluster().get(2).getAvailableLocationDetail().size());
+				pafec.PrintAllPossiblePathForClusterDetail();
+				
+				
+//				pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();
+//				try {
+//					for(int i=0;i<10;i++) {
+//						System.out.println(i);
+//						Thread.sleep(100);
+//					}
+//				} catch (InterruptedException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 				
 					
 				

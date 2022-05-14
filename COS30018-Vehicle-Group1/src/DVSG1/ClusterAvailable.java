@@ -6,7 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ClusterAvailable {
-	List<ClusterInformation> clusterAvailable;
+	List<ClusterInformation> clusterAvailable; // one of the cluster available got a list of location with it
+	//cluster name stored in CLusterInformation class
 	
 	ClusterAvailable(){
 		clusterAvailable = new ArrayList<ClusterInformation>();

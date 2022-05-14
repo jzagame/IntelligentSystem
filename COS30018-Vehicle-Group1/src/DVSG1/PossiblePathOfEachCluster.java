@@ -4,19 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PossiblePathOfEachCluster {
-	List<LocationAvailable> possiblePathOfEachCluster;
+	List<PathAvailable> possiblePathOfEachCluster;
+	String clusterName;
 	
 	PossiblePathOfEachCluster(){
-		possiblePathOfEachCluster = new ArrayList<LocationAvailable>();
+		possiblePathOfEachCluster = new ArrayList<PathAvailable>();
+		clusterName = null;
 	}
 	
-	public void setPossiblePathOfEachCluster(LocationAvailable temp) {
-		possiblePathOfEachCluster.add(temp);
+	public String getClusterName() {
+		return clusterName;
 	}
 	
-	public List<LocationAvailable> getPossiblePathOfEachCluster(){
+	public void setPossiblePathOfEachCluster(List<PathAvailable> temp,String temp1) {
+		possiblePathOfEachCluster.addAll(temp);
+		clusterName = temp1;
+	}
+	
+	public List<PathAvailable> getPossiblePathOfEachCluster(){
 		return possiblePathOfEachCluster;
 	}
 	
+	public void PrintLocationAvailableEachLocationDetail() {
+		System.out.println("Cluster Name : " + clusterName);
+		System.out.println("Available Path : " + possiblePathOfEachCluster.size());
+	}
 	
 }
