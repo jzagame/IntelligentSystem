@@ -4,11 +4,13 @@ public class LocationDetail {
 	String locationName;
 	int x;
 	int y;
+	int TotalParcel;
 	
 	LocationDetail(){
 		locationName = null;
 		x = 0;
 		y = 0;
+		TotalParcel = 0;
 	}
 	
 	public int getLocationX(){
@@ -30,5 +32,13 @@ public class LocationDetail {
 	
 	public void setLocationName(String temp) {
 		locationName = temp;
+	}
+	
+	public void setTotalParcel(int temp) {
+		TotalParcel = temp;
+	}
+	
+	public int getTotalParcel() {
+		return TotalParcel;
 	}
 }

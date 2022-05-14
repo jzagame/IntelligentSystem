@@ -24,6 +24,7 @@ import jade.lang.acl.ACLMessage;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -31,7 +32,7 @@ public class GUI {
 	DeliveryAgent da = new DeliveryAgent();
 	LocationDistance dl = new LocationDistance();
 	LocationAvailable fl = new LocationAvailable();
-	
+
 	GUI(DeliveryAgent daa,MasterRoutingAgent mra,LocationDistance dll,LocationAvailable fll){
 		da = daa;
 		dl = dll;
@@ -88,7 +89,7 @@ public class GUI {
 	}
 	
 	
-	public void UIMasterRoutingAgent(MasterRoutingAgent mra) {
+	public void UIMasterRoutingAgent(MasterRoutingAgent mra ) {
 		DisplayFullLocationMap displayFullLocationMap = new DisplayFullLocationMap(fl.getAvailableLocationDetail());
 		
 		JFrame f = new JFrame(mra.getMRA().getName());
@@ -99,9 +100,12 @@ public class GUI {
 		JPanel panelTxt = new JPanel();
 		JTextField txtCity = new JTextField("Enter Location Name" ,30);
 		JTextField txtItemNum = new JTextField("Enter Number Parcel" ,30);
-		JButton btnGenerateRoute = new JButton("Generate Route");
+		JButton btnGenerateGARoute = new JButton("Generate GA Route");
 		JButton btnSend = new JButton("Send Route");
-		panelBtn.add(btnGenerateRoute);
+		JButton btnSubmit = new JButton("Send Requirment");
+		
+		panelBtn.add(btnSubmit);
+		panelBtn.add(btnGenerateGARoute);
 		panelBtn.add(btnSend);
 		panelTxt.add(txtCity);
 		panelTxt.add(txtItemNum);
@@ -113,12 +117,43 @@ public class GUI {
 		f.setSize(860,700);
 		f.show();
 		
-		btnGenerateRoute.addActionListener(new ActionListener() {
+		btnSubmit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(int i=0;i<fl.getAvailableLocationDetail().size();i++) {
+					Random rand = new Random();
+					fl.getAvailableLocationDetail().get(i).setTotalParcel(rand.nextInt(10));// give random parcel for every location 
+				}
+			}
+			
+		});
+		btnGenerateGARoute.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				ClusterAvailable ca = new ClusterAvailable();
+				PossiblePathOfEachCluster ppoec = new PossiblePathOfEachCluster();
+				ca.CreateDefaultClusterAvailable(fl.getAvailableLocationDetail());
+				 
+				System.out.println("-----------------------------------------------------------------------");
+				List<LocationDetail> testld = new ArrayList<LocationDetail>();
+				for(ClusterInformation x:ca.getClusterAvaiableSorted()) { 
+					//command here for backup, just for check every cluster detail
+					GeneratePossiblePath ga = new GeneratePossiblePath();
+//					x.PrintClusterDetail();
+					ga.GenerateClusterPossiblePath(x.getListLocationInCluster(),
+							x.getListLocationInCluster(), testld, 70,
+							x.getListLocationInCluster().size());
+					ppoec.setPossiblePathOfEachCluster(ga.getLocationAvailableForEachCluster());
+				}
 				
+//				System.out.println(ppoec.getPossiblePathOfEachCluster().get(2).getAvailableLocationDetail().size());
+				
+					
+				
+			
 			}
 			
 		});
@@ -127,14 +162,6 @@ public class GUI {
 		btnSend.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ClusteringCalculation Cc = new ClusteringCalculation();
-				// TODO Auto-generated method stub
-				for(LocationDetail l:fl.getAvailableLocationDetail()) {
-					ClusterGroupInfo g = new ClusterGroupInfo(dl);
-					g.findNearestLocation(fl.getAvailableLocationDetail(), l);
-					Cc.setClusterGroupInfo(g);
-				}
-				
 				
 			}
 			

@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
+import java.util.Random;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -94,6 +95,7 @@ public class main extends Agent{
 		    int i=0;
 		    while ((line = file.readLine()) != null) {
 		    	LocationDetail availableLocation = new LocationDetail();
+		    	Random rand = new Random();
 		        String[] first = line.toString().split(":");
 		        availableLocation.setLocationName(first[0]);
 		        String[] second = first[1].split(",");
