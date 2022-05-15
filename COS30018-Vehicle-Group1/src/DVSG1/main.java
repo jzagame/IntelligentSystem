@@ -107,8 +107,6 @@ public class main extends Agent{
 		 // close the file
 		    file.close();
 		    distanceLocation.calculateLocationDistance(fullLocation.getAvailableLocationDetail());
-		    
-		    System.out.println(distanceLocation.getOneDistanceLoation(0, 2));
 //		    System.out.println(test1[4].getLocationName() + ":" + test1[4].getLocationX() + "," + test1[4].getLocationY());
 		    
 		    

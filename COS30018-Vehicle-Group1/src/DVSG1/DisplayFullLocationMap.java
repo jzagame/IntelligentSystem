@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -12,37 +13,70 @@ import javax.swing.JPanel;
 public class DisplayFullLocationMap extends JPanel{
 //	LocationAvailable fullLocation;
 	List<LocationDetail> x;
-	
+	String abc;
+	PathOverallSolutionForEachCluster posfec;
+	ClusterAvailable CA;
 	DisplayFullLocationMap(List<LocationDetail> temp){
 		x = temp;
+		posfec = new PathOverallSolutionForEachCluster();
+	}
+	
+	public void ClearAll(PathOverallSolutionForEachCluster temp,ClusterAvailable ca) {
+		abc = "asd";
+		posfec = temp;
+		CA = ca;
+		paintComponent(this.getGraphics());
 	}
 	
 	public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        super.setPreferredSize(new Dimension(810,620));
-        
-//        List<LocationDetail> x = fullLocation.getAvailableLocationDetail();
-        LocationDetail[] temp = x.toArray(new LocationDetail[x.size()]);
-        for(int i=0;i<temp.length;i++) {
-        	Graphics2D g2d = (Graphics2D) g;
-        	if(i < 50) {
-            	g2d.setColor(Color.BLUE);
-            }else {
-            	g2d.setColor(Color.GREEN);
-            }
-        	g2d.drawString(temp[i].getLocationName(), temp[i].getLocationX(),  temp[i].getLocationY());
-            g2d.drawOval(temp[i].getLocationX(), temp[i].getLocationY(), 5, 5);
-//            if(temp[i].getLocationName().equals("L66")) {
-//            	g2d.drawOval(temp[i].getLocationX() - 150 , temp[i].getLocationY() - 80, 300, 160);
-//            } // testing for clustering
-            
+        Color[] color = {Color.BLACK,Color.BLUE,Color.MAGENTA,Color.RED};
+        if(abc == null) {
+        	 LocationDetail[] temp = x.toArray(new LocationDetail[x.size()]);
+             for(int i=0;i<temp.length;i++) {
+             	Graphics2D g2d = (Graphics2D) g;
+             	g2d.drawString(temp[i].getLocationName(), temp[i].getLocationX(),  temp[i].getLocationY()+10);
+                g2d.fillOval(temp[i].getLocationX(), temp[i].getLocationY(), 5, 5);
+                 
+             }
+        }else {
+        	int index=0;
+        	for(ClusterInformation d:CA.getClusterAvaiableSorted()) {
+//        		d.PrintClusterDetail(); Print how many customer and Total parcel (sum of All parcel Customer) by cluster
+        		for(LocationDetail e:d.getListLocationInCluster()) {
+        			Graphics2D g2d = (Graphics2D) g;
+        			g2d.setColor(color[index]);
+                 	g2d.drawString(e.getLocationName(), e.getLocationX(), 
+                 			e.getLocationY()+10);
+                    g2d.fillOval(e.getLocationX()-2, e.getLocationY()-2, 5, 5);
+        		}
+        		index++;
+        	}
+        	index = 0;
+        	for(PathOverallSolution a:posfec.getPathOverallSolutionForEachCluster()) {
+        		Graphics2D g1d = (Graphics2D) g;
+        		g1d.setColor(color[index]);
+        		g1d.drawLine(400, 250, a.getBestPathInCluster().get(0).getLocationX(), a.getBestPathInCluster().get(0).getLocationY());
+        		for(int i=0;i<a.getBestPathInCluster().size();i++) {
+                 	Graphics2D g2d = (Graphics2D) g;
+                 	g1d.setColor(color[index]);
+                    if( (i+1) != a.getBestPathInCluster().size()) {
+                    	g2d.drawLine(a.getBestPathInCluster().get(i).getLocationX(), a.getBestPathInCluster().get(i).getLocationY(), 
+                        		a.getBestPathInCluster().get(i+1).getLocationX(), a.getBestPathInCluster().get(i+1).getLocationY());
+                    }else {
+                    	g1d.drawLine(400, 250, a.getBestPathInCluster().get(i).getLocationX(), a.getBestPathInCluster().get(i).getLocationY());
+                    }
+                     
+                 }
+        		index++;
+        	}
         }
+        
+        super.setPreferredSize(new Dimension(810,620));
         Graphics2D g2dd = (Graphics2D) g;
         g2dd.setColor(Color.BLACK);
     	g2dd.drawString("warehouse", 400,  250);
-        g2dd.drawOval(400, 250, 5, 5);
-        
-        
+        g2dd.fillRect(400, 250, 10, 10);
 //        g.drawLine(100, 100, 200, 200); 
 //        g2d.translate(100.0, 100.0); 
 //        g2d.drawLine(0, 0, 100, 100);
