@@ -2,6 +2,8 @@ package DVSG1;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import jade.core.Agent;
@@ -37,5 +39,17 @@ public class DeliveryAgent extends Agent{
 			System.out.println("Agent GUID Name : " + temp[i].getAgent().getName());
 			System.out.println("Agent GUID Name : " + temp[i].getTotalItem());
 		}
+	}
+	
+	public List<AgentConstraint> getAgentConstraintSorted() {
+		List<AgentConstraint> x = this.getListAgentConstraint();
+		Collections.sort(x, new Comparator<AgentConstraint>() {
+			@Override
+			public int compare(AgentConstraint o1, AgentConstraint o2) {
+				// TODO Auto-generated method stub
+				return o1.getTotalItem() > o2.getTotalItem() ? -1 : o1.getTotalItem() == o2.getTotalItem() ? 0:1;
+			}	
+		});
+		return x;
 	}
 }

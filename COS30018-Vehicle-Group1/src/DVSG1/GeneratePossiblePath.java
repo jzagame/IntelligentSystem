@@ -30,10 +30,10 @@ public class GeneratePossiblePath {
 					possiblePath.setPathDetail(outerLoopList);
 					possiblePath.calculateLocationDistance(outerLoopList);
 					ga.add(possiblePath);
-					System.out.println(ga.size()); //uncommand this see this result
+//					System.out.println(ga.size()); //uncommand this see this result
 					return null;
 				}else {
-					System.out.println(ga.size()); //uncommand this see this result
+//					System.out.println(ga.size()); //uncommand this see this result
 					return null;
 				}
 			}

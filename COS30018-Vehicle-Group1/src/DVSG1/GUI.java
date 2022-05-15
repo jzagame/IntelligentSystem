@@ -140,7 +140,7 @@ public class GUI {
 				System.out.println("-----------------------------------------------------------------------");
 				for(ClusterInformation x:ca.getClusterAvaiableSorted()) { 
 					//command here for backup, just for check every cluster detail
-//					x.PrintClusterDetail();
+//					
 					GeneratePossiblePath ga = new GeneratePossiblePath();
 					PossiblePathOfEachCluster ppoec = new PossiblePathOfEachCluster();
 					List<LocationDetail> temp = new ArrayList<LocationDetail>(x.getListLocationInCluster());
@@ -151,19 +151,42 @@ public class GUI {
 					pafec.setAllPossiblePathForCluster(ppoec);
 				}
 				
-				pafec.PrintAllPossiblePathForClusterDetail();
+//				pafec.PrintAllPossiblePathForClusterDetail();
 				
 				
 //				pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();
-//				try {
-//					for(int i=0;i<10;i++) {
-//						System.out.println(i);
-//						Thread.sleep(100);
-//					}
-//				} catch (InterruptedException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
+				
+				int sizeCluster = pafec.getAllPossiblePathForCluster().size();
+				int sizeAgent = da.getListAgentConstraint().size();
+				int loop = sizeCluster;
+				if(sizeCluster > sizeAgent) {
+					loop = sizeAgent;
+				}
+				
+				try {
+					for(int i=0;i<loop;i++) {
+						System.out.println("Cluster Name : " + pafec.getAllPossiblePathForCluster().get(i).getClusterName());
+						System.out.println("Agent Name : " + da.getAgentConstraintSorted().get(i).getAgentName());
+						for(PathAvailable x:pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster()) {
+							UberSalesmensch geneticAlgorithm = new UberSalesmensch(x.getPathDetail().size(), 
+									SelectionType.TOURNAMENT, x.getDistanceMatrix(), 0, 0);
+					        SalesmanGenome result = geneticAlgorithm.optimize();
+					        
+					        System.out.println("Possible Solution : " + pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster().size());
+					        System.out.print("W -> ");
+					        for(int j=0;j<result.getGenome().size();j++) {
+					        	System.out.print(x.getPathDetail().get(j).getLocationName()+ " -> ");
+					        	
+					        }
+					        System.out.println(" W");
+					        System.out.println("Distance : " + result.getFitness());
+					        System.out.println("-------------------------------------------");
+						}
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 					
 				

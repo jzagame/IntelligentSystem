@@ -12,7 +12,7 @@ public class PathAvailable {
 	}
 	
 	public void setPathDetail(List<LocationDetail> temp) {
-		distanceMatrix = new int[temp.size()][temp.size()];
+		distanceMatrix = new int[temp.size()+1][temp.size()+1];
 		pathAvailable.addAll(temp);
 	}
 	
@@ -34,7 +34,12 @@ public class PathAvailable {
 	
 	public void calculateLocationDistance(List<LocationDetail> fullLocation) {
 		List<LocationDetail> fL = fullLocation;
+		LocationDetail x = new LocationDetail();
+		x.setLocationName("WareHouse");
+		x.setXYLocation(400, 250);
+		fL.add(0,x);
 	    LocationDetail[] aL = fL.toArray(new LocationDetail[fL.size()]);
+	    
 	    for(int k=0;k<aL.length;k++) {
 	    	int currentX = aL[k].getLocationX();
 	    	int currentY = aL[k].getLocationY();

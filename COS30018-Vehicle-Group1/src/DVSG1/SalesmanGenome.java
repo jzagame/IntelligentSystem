@@ -70,6 +70,7 @@ public class SalesmanGenome implements Comparable {
             sb.append(" ");
             sb.append(gene);
         }
+        
         sb.append(" ");
         sb.append(startingCity);
         sb.append("\nLength: ");
