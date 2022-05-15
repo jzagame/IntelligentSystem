@@ -29,16 +29,38 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class GUI {
-	DeliveryAgent da = new DeliveryAgent();
-	LocationDistance dl = new LocationDistance();
-	LocationAvailable fl = new LocationAvailable();
+	private DeliveryAgent da = new DeliveryAgent();
+	private LocationDistance dl = new LocationDistance();
+	private LocationAvailable fl = new LocationAvailable();
+	private PathAvailableForEachCluster pafec;
 
 	GUI(DeliveryAgent daa,MasterRoutingAgent mra,LocationDistance dll,LocationAvailable fll){
 		da = daa;
 		dl = dll;
 		fl = fll;
+		
 		UIDeliveryAgent(mra);
 		UIMasterRoutingAgent(mra);
+	}
+	
+	public void init() {
+		ClusterAvailable ca = new ClusterAvailable();
+		pafec = new PathAvailableForEachCluster();
+		ca.CreateDefaultClusterAvailable(fl.getAvailableLocationDetail());
+		
+		for(ClusterInformation x:ca.getClusterAvaiableSorted()) { 		
+			GeneratePossiblePath ga = new GeneratePossiblePath();
+			PossiblePathOfEachCluster ppoec = new PossiblePathOfEachCluster();
+			List<LocationDetail> temp = new ArrayList<LocationDetail>(x.getListLocationInCluster());
+			ga.GenerateClusterPossiblePath(temp,
+					x.getListLocationInCluster(), 70,
+					x.getListLocationInCluster().size());
+			ppoec.setPossiblePathOfEachCluster(ga.getLocationAvailableForEachCluster(),x.getClusterName());
+			pafec.setAllPossiblePathForCluster(ppoec);
+		}
+		
+//		pafec.PrintAllPossiblePathForClusterDetail();	
+//		pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();
 	}
 	
 	public void UIDeliveryAgent(MasterRoutingAgent mra) {
@@ -50,8 +72,6 @@ public class GUI {
 		JTextField[] txt = new JTextField[size];
 		JButton[] btn = new JButton[size];
 
-		
-		
 		for(int i=0;i<size;i++) {
 			j[i] = new JFrame(temp[i].getAgent().getName());
 			p[i] = new JPanel();
@@ -101,11 +121,13 @@ public class GUI {
 		JTextField txtCity = new JTextField("Enter Location Name" ,30);
 		JTextField txtItemNum = new JTextField("Enter Number Parcel" ,30);
 		JButton btnGenerateGARoute = new JButton("Generate GA Route");
+		JButton btnGenerateACORoute = new JButton("Generate ACO Route");
 		JButton btnSend = new JButton("Send Route");
 		JButton btnSubmit = new JButton("Send Requirment");
 		
 		panelBtn.add(btnSubmit);
 		panelBtn.add(btnGenerateGARoute);
+		panelBtn.add(btnGenerateACORoute);
 		panelBtn.add(btnSend);
 		panelTxt.add(txtCity);
 		panelTxt.add(txtItemNum);
@@ -125,76 +147,33 @@ public class GUI {
 					Random rand = new Random();
 					fl.getAvailableLocationDetail().get(i).setTotalParcel(rand.nextInt(9) + 1);// give random parcel for every location 
 				}
+				// for initialize cluster 
+				init();
 			}
 			
 		});
+		
 		btnGenerateGARoute.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				ClusterAvailable ca = new ClusterAvailable();
-				PathAvailableForEachCluster pafec = new PathAvailableForEachCluster();
-				ca.CreateDefaultClusterAvailable(fl.getAvailableLocationDetail());
-				 
-				System.out.println("-----------------------------------------------------------------------");
-				for(ClusterInformation x:ca.getClusterAvaiableSorted()) { 
-					//command here for backup, just for check every cluster detail
-//					
-					GeneratePossiblePath ga = new GeneratePossiblePath();
-					PossiblePathOfEachCluster ppoec = new PossiblePathOfEachCluster();
-					List<LocationDetail> temp = new ArrayList<LocationDetail>(x.getListLocationInCluster());
-					ga.GenerateClusterPossiblePath(temp,
-							x.getListLocationInCluster(), 70,
-							x.getListLocationInCluster().size());
-					ppoec.setPossiblePathOfEachCluster(ga.getLocationAvailableForEachCluster(),x.getClusterName());
-					pafec.setAllPossiblePathForCluster(ppoec);
-				}
-				
-//				pafec.PrintAllPossiblePathForClusterDetail();
-				
-				
-//				pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();
-				
-				int sizeCluster = pafec.getAllPossiblePathForCluster().size();
-				int sizeAgent = da.getListAgentConstraint().size();
-				int loop = sizeCluster;
-				if(sizeCluster > sizeAgent) {
-					loop = sizeAgent;
-				}
-				
-				try {
-					for(int i=0;i<loop;i++) {
-						System.out.println("Cluster Name : " + pafec.getAllPossiblePathForCluster().get(i).getClusterName());
-						System.out.println("Agent Name : " + da.getAgentConstraintSorted().get(i).getAgentName());
-						for(PathAvailable x:pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster()) {
-							UberSalesmensch geneticAlgorithm = new UberSalesmensch(x.getPathDetail().size(), 
-									SelectionType.TOURNAMENT, x.getDistanceMatrix(), 0, 0);
-					        SalesmanGenome result = geneticAlgorithm.optimize();
-					        
-					        System.out.println("Possible Solution : " + pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster().size());
-					        System.out.print("W -> ");
-					        for(int j=0;j<result.getGenome().size();j++) {
-					        	System.out.print(x.getPathDetail().get(j).getLocationName()+ " -> ");
-					        	
-					        }
-					        System.out.println(" W");
-					        System.out.println("Distance : " + result.getFitness());
-					        System.out.println("-------------------------------------------");
-						}
-					}
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-					
-				
-			
+				Print print = new Print(pafec, da, AlgorithmType.GA);
+				print.Output();
+			}
+		
+		});
+		
+		btnGenerateACORoute.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Print print = new Print(pafec, da, AlgorithmType.ACO);
+				print.Output();
 			}
 			
 		});
-		
 		
 		btnSend.addActionListener(new ActionListener() {
 			@Override
