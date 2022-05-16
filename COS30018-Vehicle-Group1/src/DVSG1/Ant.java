@@ -22,7 +22,7 @@ public class Ant {
 		return visited[i];
 	}
 
-	protected double trailLength(double graph[][]) {
+	protected double trailLength(int graph[][]) {
 		double length = graph[trail[trailSize - 1]][trail[0]];
 		for (int i = 0; i < trailSize - 1; i++) {
 			length += graph[trail[i]][trail[i + 1]];

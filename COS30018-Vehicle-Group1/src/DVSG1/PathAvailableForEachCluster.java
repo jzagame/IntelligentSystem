@@ -27,6 +27,7 @@ public class PathAvailableForEachCluster {
 				x.getPossiblePathOfEachCluster().get(i).PrintPathLocation();
 				System.out.println("");
 			}
+			
 		}
 	}
 }

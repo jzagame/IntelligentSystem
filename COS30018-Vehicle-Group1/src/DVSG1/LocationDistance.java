@@ -50,32 +50,4 @@ public class LocationDistance {
 	    	}
 	    }
 	}
-	
-	public int[][] calculateDistanceMatrix(List<LocationDetail> fullLocation) {
-		int[][] temp = new int[fullLocation.size()][fullLocation.size()];
-		List<LocationDetail> fL = fullLocation;
-	    LocationDetail[] aL = fL.toArray(new LocationDetail[fL.size()]);
-	    
-	    for(int k=0;k<aL.length;k++) {
-	    	int currentX = aL[k].getLocationX();
-	    	int currentY = aL[k].getLocationY();
-	    	for(int l=0;l<aL.length;l++) {
-	    		int compareX = aL[l].getLocationX();
-	    		int compareY = aL[l].getLocationY();
-	    		int totalDistance = 0;
-	    		if(currentX >= compareX) {
-	    			totalDistance += (currentX-compareX);
-	    		}else {
-	    			totalDistance += (compareX-currentX);
-	    		}
-	    		if(currentY >= compareY) {
-	    			totalDistance += (currentY - compareY);
-	    		}else {
-	    			totalDistance += (compareY - currentY);
-	    		}
-	    		this.setDistanLocation(totalDistance, k, l);
-	    	}
-	    }
-	    return temp;
-	}
 }

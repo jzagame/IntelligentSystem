@@ -27,7 +27,7 @@ public class AntColonyOptimization {
 
     private int numberOfCities;
     private int numberOfAnts;
-    private double graph[][];
+    private int graph[][];
     private double trails[][];
     private List<Ant> ants = new ArrayList<>();
     private Random random = new Random();
@@ -37,9 +37,11 @@ public class AntColonyOptimization {
 
     private int[] bestTourOrder;
     private double bestTourLength;
+    
+	public Solution bestSolution;
 
-    public AntColonyOptimization(int noOfCities) {
-        graph = generateRandomMatrix(noOfCities);
+    public AntColonyOptimization(int noOfCities, int[][] travelPrices) {
+        graph = travelPrices;
         // graph length equals no of cities
         numberOfCities = graph.length;
         numberOfAnts = (int) (numberOfCities * antFactor);
@@ -51,29 +53,23 @@ public class AntColonyOptimization {
     }
 
     /**
-     * Generate initial solution
-     */
-    public double[][] generateRandomMatrix(int n) {
-        double[][] randomMatrix = new double[n][n];
-        IntStream.range(0, n)
-            .forEach(i -> IntStream.range(0, n)
-                .forEach(j -> randomMatrix[i][j] = Math.abs(random.nextInt(100) + 1)));
-        return randomMatrix;
-    }
-
-    /**
      * Perform ant optimization
      */
     public void startAntOptimization() {
-    	solve();
+    	  IntStream.rangeClosed(1, maxIterations)
+          .forEach(i -> {
+              System.out.println("Attempt #" + i);
+              solve();
+          });
+    	  
+    	  //System.out.println("Best tour length: " + (bestTourLength - numberOfCities));
+          // System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
     }
 
     /**
      * Use this method to run the main logic
      */
     public int[] solve() {
-    	
-    	  
         setupAnts();
         clearTrails();
         IntStream.range(0, maxIterations)
@@ -86,8 +82,6 @@ public class AntColonyOptimization {
                 updateBest();
             });
       
-        System.out.println("Best tour length: " + (bestTourLength - numberOfCities));
-        System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
         return bestTourOrder.clone();
     }
 
@@ -215,6 +209,17 @@ public class AntColonyOptimization {
                 IntStream.range(0, numberOfCities)
                     .forEach(j -> trails[i][j] = c);
             });
+    }
+    
+    /**
+     * Return index of location
+     */
+    public int[] getBest() {
+    	return bestTourOrder;
+    }
+    
+    public double getDistance() {
+    	return (bestTourLength - numberOfCities);
     }
 
 }
