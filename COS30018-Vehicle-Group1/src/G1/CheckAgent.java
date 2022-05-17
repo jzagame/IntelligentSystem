@@ -37,12 +37,15 @@ public class CheckAgent extends Agent{
 			Long l = Long.valueOf(-1);
 			c.setMaxResults(l);
 			agents = AMSService.search(this, new AMSAgentDescription(),c);
-			
+			for(int i=0;i<agents.length;i++) {
+				System.out.println(agents[i]);
+			}
 		}catch(Exception e) {
 			System.out.println(e);
 			e.printStackTrace();
 		}
 		AID myID = getAID();
+		System.out.println(getAID());
 		
 		sa = new StoreAgent(agents,myID,"1100","192.168.68.109");
 		

@@ -17,6 +17,7 @@ public class PathAvailable {
 		x.setXYLocation(400, 250);
 		x.setTotalParcel(0);
 		temp.add(0,x);
+		
 		distanceMatrix = new int[temp.size()][temp.size()];
 		pathAvailable.addAll(temp);
 	}

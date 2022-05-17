@@ -1,4 +1,4 @@
-package DVSG1;
+package backup;
 
 import java.util.Iterator;
 
@@ -8,9 +8,9 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
 
-public class ReceiverAgent extends Agent{
+public class ReceiverAgent2 extends Agent{
 	static Agent AgentName;
-	ReceiverAgent(){
+	ReceiverAgent2(){
 		AgentName = null;
 	}
 	
@@ -26,12 +26,18 @@ public class ReceiverAgent extends Agent{
 		CyclicBehaviour msgReceivingBehaviour = (new CyclicBehaviour(AgentName){	
 			public void action() {
 //				System.out.println("here");
-				System.out.println(AgentName.getLocalName() + ": Waiting for message");
+				
 				ACLMessage msg= AgentName.receive();
+				if(msg == null) {
+					System.out.println(AgentName.getLocalName() + ": Waiting for message");
+				}
 				if (msg!=null) {
 					// Print out message content
-					System.out.println(AgentName.getLocalName() + ": Received Message From " + 
-					msg.getSender().getLocalName() + " [ Total Capacity (num) : " + msg.getContent() + " ]");
+					System.out.println(AgentName.getLocalName() + " received Message From " + 
+					msg.getSender().getLocalName() );
+					System.out.println( " || Message : " + msg.getContent());
+					
+					System.out.println(AgentName.getLocalName() + " : Waiting for message");
 					
 				}
 				// Continue listening

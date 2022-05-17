@@ -40,11 +40,11 @@ public class PathOverallSolutionInformation {
 		return pathOverallSoluitionInformation;
 	}
 	
-	public void calculateLocationDistance(List<LocationDetail> temp) {
-		List<LocationDetail> fL = temp;
+	public void calculateLocationDistance() {
+		List<LocationDetail> fL = pathOverallSoluitionInformation;
 		LocationDetail x = new LocationDetail();
 	    LocationDetail[] aL = fL.toArray(new LocationDetail[fL.size()]);
-	    
+	    int temp = 0;
 	    for(int k=0;k<aL.length;k++) {
 	    	int currentX = aL[k].getLocationX();
 	    	int currentY = aL[k].getLocationY();

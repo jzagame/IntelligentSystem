@@ -1,9 +1,11 @@
 package DVSG1;
 
 import jade.core.Agent;
+import jade.domain.FIPAAgentManagement.AMSAgentDescription;
 
 public class AgentConstraint {
 	Agent agent;
+	AMSAgentDescription agentDetail;
 	String AgentName;
 	int TotalItem;
 	
@@ -11,6 +13,14 @@ public class AgentConstraint {
 		AgentName = null;
 		TotalItem = 0;
 		agent = null;
+	}
+	
+	public AMSAgentDescription getAgentAMSAgentDescription() {
+		return agentDetail;
+	}
+	
+	public void setAgentAMSAgentDescription(AMSAgentDescription temp) {
+		agentDetail = temp;
 	}
 	
 	public int getTotalItem() {
