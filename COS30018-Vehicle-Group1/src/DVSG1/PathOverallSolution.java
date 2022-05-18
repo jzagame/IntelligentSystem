@@ -63,7 +63,7 @@ public class PathOverallSolution {
 	
 	public void PrintBestPathDetail() {
 		for(LocationDetail x:bestPathInCluster) {
-			System.out.print(x.getLocationName() + " ");
+			System.out.print(x.getLocationName() + " -> ");
 		}
 		System.out.println("");
 	}
