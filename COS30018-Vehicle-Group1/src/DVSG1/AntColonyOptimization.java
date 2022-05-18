@@ -39,31 +39,40 @@ public class AntColonyOptimization {
     private double bestTourLength;
     
 	public Solution bestSolution;
+	
+	private int startingCity;
+	private int targetFitness;
 
-    public AntColonyOptimization(int noOfCities, int[][] travelPrices) {
+    public AntColonyOptimization(int[][] travelPrices, int startingCity, int targetFitness){
         graph = travelPrices;
         // graph length equals no of cities
         numberOfCities = graph.length;
+    //    System.out.println(numberOfCities);
         numberOfAnts = (int) (numberOfCities * antFactor);
+        
+        this.startingCity = startingCity;
+        this.targetFitness = targetFitness;
 
         trails = new double[numberOfCities][numberOfCities];
         probabilities = new double[numberOfCities];
         IntStream.range(0, numberOfAnts)
             .forEach(i -> ants.add(new Ant(numberOfCities)));
     }
-
+    
+    public double getBestTour() {
+    	return bestTourLength - numberOfCities;
+    }
+    
     /**
      * Perform ant optimization
      */
     public void startAntOptimization() {
-    	  IntStream.rangeClosed(1, maxIterations)
-          .forEach(i -> {
-              System.out.println("Attempt #" + i);
-              solve();
-          });
-    	  
-    	  //System.out.println("Best tour length: " + (bestTourLength - numberOfCities));
-          // System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
+    	IntStream.rangeClosed(0, maxIterations)
+        .forEach(i -> {
+            solve();
+        });
+        System.out.println("Best tour length: " + (bestTourLength - numberOfCities));
+        System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
     }
 
     /**
@@ -81,7 +90,6 @@ public class AntColonyOptimization {
                 // update best solution
                 updateBest();
             });
-      
         return bestTourOrder.clone();
     }
 
@@ -93,7 +101,7 @@ public class AntColonyOptimization {
             .forEach(i -> {
                 ants.forEach(ant -> {
                     ant.clear();
-                    ant.visitCity(-1, random.nextInt(numberOfCities));
+                    ant.visitCity(-1, 0);
                 });
             });
         currentIndex = 0;
@@ -216,10 +224,6 @@ public class AntColonyOptimization {
      */
     public int[] getBest() {
     	return bestTourOrder;
-    }
-    
-    public double getDistance() {
-    	return (bestTourLength - numberOfCities);
     }
 
 }

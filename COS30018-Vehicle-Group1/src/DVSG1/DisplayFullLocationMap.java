@@ -60,17 +60,34 @@ public class DisplayFullLocationMap extends JPanel{
         		for(int i=0;i<a.getBestPathInCluster().size();i++) {
                  	Graphics2D g2d = (Graphics2D) g;
                  	g1d.setColor(color[index]);
+                 	
                     if( (i+1) != a.getBestPathInCluster().size()) {
                     	g2d.drawLine(a.getBestPathInCluster().get(i).getLocationX(), a.getBestPathInCluster().get(i).getLocationY(), 
                         		a.getBestPathInCluster().get(i+1).getLocationX(), a.getBestPathInCluster().get(i+1).getLocationY());
+                    	int x = 0;
+                    	int y = 0;
+                    	int costx = 0;
+                    	int costy = 0;
+                    	x = Math.abs(a.getBestPathInCluster().get(i+1).getLocationX() - a.getBestPathInCluster().get(i).getLocationX());
+                    	y = Math.abs(a.getBestPathInCluster().get(i+1).getLocationY() - a.getBestPathInCluster().get(i).getLocationY());
+                    	costx = a.getBestPathInCluster().get(i).getLocationX() + ( x/2);
+                    	costy =  a.getBestPathInCluster().get(i).getLocationY() + ( y /2);
+                    	if(a.getBestPathInCluster().get(i).getLocationX() > a.getBestPathInCluster().get(i +1).getLocationX()) {
+                    		costx = a.getBestPathInCluster().get(i).getLocationX() - (x /2);
+                    	}
+                    	if(a.getBestPathInCluster().get(i).getLocationY() > a.getBestPathInCluster().get(i+1).getLocationY()) {
+                    		costy =  a.getBestPathInCluster().get(i).getLocationY() - ( y /2);
+                    	}
+                    	g2d.drawString("cost : " +String.valueOf(x+y), costx, costy);
                     }else {
                     	g1d.drawLine(400, 250, a.getBestPathInCluster().get(i).getLocationX(), a.getBestPathInCluster().get(i).getLocationY());
-                    }
-                     
+                    }  
                  }
+        		 a.PrintBestPathDetail();
         		index++;
         	}
         }
+        
         
         super.setPreferredSize(new Dimension(810,620));
         Graphics2D g2dd = (Graphics2D) g;

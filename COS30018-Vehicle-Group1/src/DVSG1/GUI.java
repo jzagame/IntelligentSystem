@@ -32,10 +32,10 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 public class GUI {
-	private DeliveryAgent da = new DeliveryAgent();
-	private LocationDistance dl = new LocationDistance();
-	private LocationAvailable fl = new LocationAvailable();
-	private ClusterAvailable ca = new ClusterAvailable();
+	DeliveryAgent da = new DeliveryAgent();
+	LocationDistance dl = new LocationDistance();
+	LocationAvailable fl = new LocationAvailable();
+	ClusterAvailable ca = new ClusterAvailable();
 
 	GUI(DeliveryAgent daa,MasterRoutingAgent mra,LocationDistance dll,LocationAvailable fll){
 		da = daa;
@@ -52,23 +52,27 @@ public class GUI {
 		JFrame[] j = new JFrame[size];
 		JPanel[] p = new JPanel[size];
 		JTextField[] txt = new JTextField[size];
-		JButton[] btn = new JButton[size];
+		JButton[] btnsend = new JButton[size];
+		JButton[] btnReceived = new JButton[size];
 
 		for(int i=0;i<size;i++) {
-			j[i] = new JFrame(temp[i].getAgent().getName());
+			j[i] = new JFrame(temp[i].getAgentName());
 			p[i] = new JPanel();
 			txt[i] = new JTextField("Capacity",10);
-			btn[i] = new JButton("Send");
-			btn[i].setActionCommand(temp[i].getAgentName());
+			btnsend[i] = new JButton("Send");
+			btnReceived[i] = new JButton("Received");
+			btnsend[i].setActionCommand(temp[i].getAgentName());
+			btnReceived[i].setActionCommand(temp[i].getAgentName());
 			p[i].add(txt[i]);
-			p[i].add(btn[i]);
+			p[i].add(btnsend[i]);
+			p[i].add(btnReceived[i]);
 			j[i].add(p[i]);
 			j[i].setSize(600,600);
 			j[i].show();
 		}
 		
 		for(int i=0;i<size;i++) {
-			btn[i].addActionListener(new ActionListener() {
+			btnsend[i].addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					for(int i=0;i< size;i++) {
@@ -77,10 +81,31 @@ public class GUI {
 							msg.setContent(txt[i].getText());
 							temp[i].setTotalItem(Integer.valueOf(txt[i].getText()));
 							da = new DeliveryAgent(Arrays.asList(temp));
-//							msg.setSender(temp[1].getAgent().getAID());
+							msg.setSender(temp[i].getAgentAMSAgentDescription().getName());
 							msg.addReceiver(mra.getMRA().getAID());
-							temp[i].getAgent().send(msg);
-							System.out.println(msg);
+							mra.getMRA().send(msg);
+							break;
+						}
+					}
+				}
+				
+			});
+		}
+		
+		for(int i=0;i<size;i++) {
+			btnReceived[i].addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for(int i=0;i< size;i++) {
+						if(temp[i].getAgentName() == e.getActionCommand()) {
+							System.out.println("asdasdsad - 1");
+							ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+							msg.setContent(txt[i].getText());
+							temp[i].setTotalItem(Integer.valueOf(txt[i].getText()));
+							da = new DeliveryAgent(Arrays.asList(temp));
+							msg.setSender(mra.getMRA().getAID());
+							msg.addReceiver(temp[i].getAgentAMSAgentDescription().getName());
+							mra.getMRA().send(msg);
 							break;
 						}
 					}
@@ -115,20 +140,82 @@ public class GUI {
 		JButton btnSubmit = new JButton("Send Requirment");
 		
 		panelBtn.add(btnSubmit);
-		panelBtn.add(btnGenerateGARoute);
 		panelBtn.add(btnGenerateACORoute);
+		panelBtn.add(btnGenerateGARoute);
 		panelBtn.add(btnSend);
 		panelTxt.add(txtCity);
 		panelTxt.add(txtItemNum);
-		
 		b.add(panelBtn);
 		b.add(panelTxt);
+		
+		
+		
 		b.add(displayFullLocationMap);
 		b.add(Box.createVerticalGlue());
 		
 		f.add(b);
 		f.setSize(new Dimension(1200,800));
+		
 		f.setVisible(true);
+		
+		btnGenerateACORoute.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PathAvailableForEachCluster pafec = FindAvailablePath();
+				// TODO Auto-generated method stub
+				int sizeCluster = pafec.getAllPossiblePathForCluster().size();
+				int sizeAgent = da.getListAgentConstraint().size();
+				int loop = sizeCluster;
+				if(sizeCluster > sizeAgent) {
+					loop = sizeAgent;
+				}
+				PathOverallSolutionForEachCluster posfec = new PathOverallSolutionForEachCluster();
+				try {
+					for(int i=0;i<loop;i++) {
+						PathOverallSolution pos = new PathOverallSolution();
+						System.out.println("Cluster Name : " + pafec.getAllPossiblePathForCluster().get(i).getClusterName());
+						System.out.println("Agent Name : " + da.getAgentConstraintSorted().get(i).getAgentName());
+						for(PathAvailable x:pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster()) {
+							PathOverallSolutionInformation posi = new PathOverallSolutionInformation();
+							
+							AntColonyOptimization antColony = new AntColonyOptimization(x.getDistanceMatrix(), 0, 0); 
+							antColony.startAntOptimization();
+							List<LocationDetail> tempL = new ArrayList<LocationDetail>();
+							
+							System.out.println("Possible Solution : " + pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster().size());   
+							
+							for(int j=0;j<antColony.getBest().length;j++) {                                                                                   
+								LocationDetail tempL1 = new LocationDetail();                                                                                 
+								tempL1.setLocationName(x.getPathDetail().get(antColony.getBest()[j]).getLocationName());                                      
+								tempL1.setTotalParcel(x.getPathDetail().get(antColony.getBest()[j]).getTotalParcel());                                        
+								tempL1.setXYLocation(x.getPathDetail().get(antColony.getBest()[j]).getLocationX(),                                            
+										x.getPathDetail().get(antColony.getBest()[j]).getLocationY());                                                        
+								System.out.print(x.getPathDetail().get(antColony.getBest()[j]).getLocationName()+ " -> ");                                    
+								tempL.add(tempL1);                                                                                                            
+							}                                                                                                                                 
+							posi.setPathOverallSoluitionInformation(tempL);                                                                                   
+							posi.calculateLocationDistance();                                                                                            
+							posi.calculateTotalParcel();                                                                                                      
+							System.out.println(" Warehouse");                                                                                                         
+							System.out.println("Distance : " + antColony.getBestTour());                                                                       
+							System.out.println("-------------------------------------------");                                                                
+							pos.setPathOverallSolution(posi);
+					       
+						}
+						pos.CalculateBestPathForAgent(pos.getPathOverallSolution());
+						posfec.setPathOverallSolutionForEachCluster(pos);
+						
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				displayFullLocationMap.ClearAll(posfec,ca);
+			}
+			
+			
+		});
 		
 		btnSubmit.addActionListener(new ActionListener() {
 			
@@ -137,7 +224,7 @@ public class GUI {
 				
 				for(int i=0;i<fl.getAvailableLocationDetail().size();i++) {
 					Random rand = new Random();
-					fl.getAvailableLocationDetail().get(i).setTotalParcel(rand.nextInt(14) + 1);// give random parcel for every location 
+					fl.getAvailableLocationDetail().get(i).setTotalParcel(rand.nextInt(9) + 1);// give random parcel for every location 
 				}
 				ca.getClusterAvaiableSorted().get(0).CalculateClusterTotalItem();
 				ca.getClusterAvaiableSorted().get(1).CalculateClusterTotalItem();
@@ -148,7 +235,6 @@ public class GUI {
 			}
 			
 		});
-		
 		btnGenerateGARoute.addActionListener(new ActionListener() {
 
 			@Override
@@ -156,9 +242,9 @@ public class GUI {
 				// TODO Auto-generated method stub
 				
 				PathAvailableForEachCluster pafec = FindAvailablePath();
-				PathOverallSolutionForEachCluster posfec = new PathOverallSolutionForEachCluster();
 				
-//				pafec.PrintAllPossiblePathForClusterDetail();	
+//				pafec.PrintAllPossiblePathForClusterDetail();
+				
 //				pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();
 				
 				int sizeCluster = pafec.getAllPossiblePathForCluster().size();
@@ -167,7 +253,7 @@ public class GUI {
 				if(sizeCluster > sizeAgent) {
 					loop = sizeAgent;
 				}
-				
+				PathOverallSolutionForEachCluster posfec = new PathOverallSolutionForEachCluster();
 				try {
 					for(int i=0;i<loop;i++) {
 						PathOverallSolution pos = new PathOverallSolution();
@@ -192,21 +278,24 @@ public class GUI {
 					        	tempL.add(tempL1);
 					        }
 					        posi.setPathOverallSoluitionInformation(tempL);
-					        posi.calculateLocationDistance(tempL);
+					        posi.calculateLocationDistance();
 					        posi.calculateTotalParcel();
+					        posi.setFitness(result.getFitness());
 					        System.out.println(" W");
 					        System.out.println("Distance : " + result.getFitness());
+					        
 					        System.out.println("-------------------------------------------");
 					        pos.setPathOverallSolution(posi);
-					       
 						}
-						pos.CalculateBestPathForAgent();
+						pos.CalculateBestPathForAgent(pos.getPathOverallSolution());
 						posfec.setPathOverallSolutionForEachCluster(pos);
 					}
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
+				System.out.println("Me : " + posfec.getPathOverallSolutionForEachCluster().get(0).getPathOverallSolution().get(0).getFitness());
 				
 //				posfec.getPathOverallSolutionForEachCluster().get(0).getBestPathInCluster();
 				displayFullLocationMap.ClearAll(posfec,ca);
@@ -214,75 +303,11 @@ public class GUI {
 			
 		});
 		
-		btnGenerateACORoute.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				PathAvailableForEachCluster pafec = FindAvailablePath();
-				PathOverallSolutionForEachCluster posfec = new PathOverallSolutionForEachCluster();
-				
-//				pafec.PrintAllPossiblePathForClusterDetail();
-//				pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();
-				
-				int sizeCluster = pafec.getAllPossiblePathForCluster().size();
-				int sizeAgent = da.getListAgentConstraint().size();
-				int loop = sizeCluster;
-				if(sizeCluster > sizeAgent) {
-					loop = sizeAgent;
-				}
-				
-				try {
-					for(int i=0;i<loop;i++) {
-						PathOverallSolution pos = new PathOverallSolution();
-						System.out.println("Cluster Name : " + pafec.getAllPossiblePathForCluster().get(i).getClusterName());
-						System.out.println("Agent Name : " + da.getAgentConstraintSorted().get(i).getAgentName());
-						for(PathAvailable x:pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster()) {
-							PathOverallSolutionInformation posi = new PathOverallSolutionInformation();
-							
-							AntColonyOptimization antColony = new AntColonyOptimization(x.getPathDetail().size(), x.getDistanceMatrix());
-					    	antColony.startAntOptimization();
-					    	
-					        List<LocationDetail> tempL = new ArrayList<LocationDetail>();
-					        
-					        System.out.println("Possible Solution : " + pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster().size());
-					        System.out.print("W -> ");
-					        for(int j=0;j<antColony.getBest().length;j++) {
-					        	LocationDetail tempL1 = new LocationDetail();
-					        	tempL1.setLocationName(x.getPathDetail().get(antColony.getBest()[j]).getLocationName());
-					        	tempL1.setTotalParcel(x.getPathDetail().get(antColony.getBest()[j]).getTotalParcel());
-					        	tempL1.setXYLocation(x.getPathDetail().get(antColony.getBest()[j]).getLocationX(), 
-					        			x.getPathDetail().get(antColony.getBest()[j]).getLocationY());
-					        	System.out.print(x.getPathDetail().get(antColony.getBest()[j]).getLocationName()+ " -> ");
-					        	tempL.add(tempL1);
-					        }
-					        posi.setPathOverallSoluitionInformation(tempL);
-					        posi.calculateLocationDistance(tempL);
-					        posi.calculateTotalParcel();
-					        System.out.println(" W");
-					        System.out.println("Distance : " + antColony.getDistance());
-					        System.out.println("-------------------------------------------");
-					        pos.setPathOverallSolution(posi);
-					       
-						}
-						pos.CalculateBestPathForAgent();
-						posfec.setPathOverallSolutionForEachCluster(pos);
-					}
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-//				posfec.getPathOverallSolutionForEachCluster().get(0).getBestPathInCluster();
-				displayFullLocationMap.ClearAll(posfec,ca);
-			}
-			
-		});
 		
 		btnSend.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				SendToAgent(mra,2);
 			}
 			
 		});
@@ -297,7 +322,7 @@ public class GUI {
 	public PathAvailableForEachCluster FindAvailablePath() {
 		PathAvailableForEachCluster pafec = new PathAvailableForEachCluster();
 		
-	//	System.out.println("-----------------------------------------------------------------------");
+		System.out.println("-----------------------------------------------------------------------");
 		for(ClusterInformation x:ca.getClusterAvaiableSorted()) { 
 			//command here for backup, just for check every cluster detail
 //			
@@ -306,11 +331,34 @@ public class GUI {
 			List<LocationDetail> temp = new ArrayList<LocationDetail>(x.getListLocationInCluster());
 			List<LocationDetail> temp2 = new ArrayList<LocationDetail>(x.getListLocationInCluster());
 			ga.GenerateClusterPossiblePath(temp,
-					temp2, 200,
+					temp2, 150,
 					x.getListLocationInCluster().size());
 			ppoec.setPossiblePathOfEachCluster(ga.getLocationAvailableForEachCluster(),x.getClusterName());
 			pafec.setAllPossiblePathForCluster(ppoec);
 		}
 		return pafec;
 	}
+	
+	public void SendToAgent(MasterRoutingAgent mra,int n) {
+		
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent("IS me");
+		
+		msg.addReceiver(da.getListAgentConstraint().get(0).getAgent().getAID());
+		mra.getMRA().send(msg);
+		
+//		for(int i=0;i<2;i++) {
+//			ReceiverAgent a = new ReceiverAgent();
+//			a.setAgent(da.getListAgentConstraint().get(0).getAgent());
+//			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+//			msg.setContent("IS me");
+//			msg.addReceiver(da.getListAgentConstraint().get(0).getAgent().getAID());
+//			mra.getMRA().send(msg);
+//			da.getListAgentConstraint().get(0).getAgent().doDelete();
+//		}
+		
+	}
+	
+	
+	
 }

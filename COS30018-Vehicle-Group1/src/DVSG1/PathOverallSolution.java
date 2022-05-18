@@ -8,6 +8,7 @@ public class PathOverallSolution {
 	List<PathOverallSolutionInformation> pathOverallSolution;
 	String clusterName;
 	List<LocationDetail> bestPathInCluster;
+	int BestFitness;
 	
 	PathOverallSolution(){
 		pathOverallSolution = new ArrayList<PathOverallSolutionInformation>();
@@ -34,16 +35,20 @@ public class PathOverallSolution {
 		clusterName = name;
 	}
 	
+	public void setFitness(int temp) {
+		BestFitness = temp;
+	}
+	
 	public String getPathOverallSolutionClusterName() {
 		return clusterName;
 	}
 	
-	public void CalculateBestPathForAgent() {
+	public void CalculateBestPathForAgent(List<PathOverallSolutionInformation> temp) {
 		int i = 0;
-		int index = 0 ;
-		int tempTotalParcel = 0;
-		int tempFitness = 0;
-		for(PathOverallSolutionInformation x:pathOverallSolution) {
+		int index = 0;
+		int tempTotalParcel = temp.get(0).getTotalParcelInPath();
+		int tempFitness = temp.get(0).getFitness();
+		for(PathOverallSolutionInformation x:temp) {
 			if( tempFitness > x.getFitness() || (tempFitness == x.getFitness() && tempTotalParcel < x.getTotalParcelInPath())) {
 				tempTotalParcel = x.getTotalParcelInPath();
 				tempFitness = x.getFitness();
@@ -51,7 +56,16 @@ public class PathOverallSolution {
 			}
 			i++;
 		}
+		System.out.println("Best Distance : " + tempFitness);
+		this.setFitness(tempFitness);
 		this.setBestPathInCluster(pathOverallSolution.get(index).getPathOverallSoluitionInformation());
+	}
+	
+	public void PrintBestPathDetail() {
+		for(LocationDetail x:bestPathInCluster) {
+			System.out.print(x.getLocationName() + " ");
+		}
+		System.out.println("");
 	}
 	
 	
