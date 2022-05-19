@@ -1,42 +1,99 @@
 package DVSG1;
 
 import java.util.Arrays;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.AMSService;
 import jade.domain.FIPAAgentManagement.AMSAgentDescription;
+import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.lang.acl.ACLMessage;
+
+import jade.lang.acl.MessageTemplate;
+import jade.proto.AchieveREResponder;
+import jade.proto.AchieveREInitiator;
+import jade.domain.FIPANames;
+import jade.domain.FIPAAgentManagement.NotUnderstoodException;
+import jade.domain.FIPAAgentManagement.RefuseException;
+import java.util.Vector;
 
 public class Receiver extends Agent{
 	protected void setup(){
 	 // Create behaviour that receives messages
+		
+	// ----------------------------------------------------------------- //
 		CyclicBehaviour msgReceivingBehaviour = (new CyclicBehaviour(this){
 			public void action() {
-				System.out.println(getLocalName() + ": Waiting for message");
+				
 				ACLMessage msg= receive();
+				if(msg == null) {
+					System.out.println(getLocalName() + ": Waiting for message");
+				}
 				if (msg!=null) {
 					// Print out message content
-					System.out.println(getLocalName() + ": Received response " +
-						 msg.getContent() + " from " + msg.getSender().getLocalName());
+					System.out.println(getLocalName() + " recieved Message from " + msg.getSender().getLocalName());
+					System.out.println("Message : " + msg.getContent() );
 				}
 				// Continue listening
 				block();
 				// This line gets printed since the blocking effect is achieved only after
-				System.out.println(getLocalName() + ": This line is printed");
+				System.out.println("----------------------------------------------------------------");
 			}
 		});
-	addBehaviour(msgReceivingBehaviour);
+		addBehaviour(msgReceivingBehaviour);
+	//------------------------------------------------------------------------------------------------//
+		//hide cyclic if want to test sniff
+	//------------------------------------------------------------------------------------------------//
+//		MessageTemplate template = MessageTemplate.and(
+//				MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST),
+//				MessageTemplate.MatchPerformative(ACLMessage.REQUEST) );
+//		       
+//		addBehaviour(new AchieveREResponder(this, template) {
+//			protected ACLMessage prepareResponse(ACLMessage request) throws
+//				NotUnderstoodException, RefuseException {
+//		     		System.out.println("Agent "+getLocalName()+": REQUEST received from "+request.getSender().getName()+". Action is "+request.getContent());
+//		     		if (checkAction()) {
+//		      // We agree to perform the action. Note that in the FIPA‐Request
+//		      // protocol the AGREE message is optional. Return null if you
+//		      // don't want to send it.
+//		     			System.out.println("Agent "+getLocalName()+": Agree");
+//		     			ACLMessage agree = request.createReply();
+//		     			agree.setPerformative(ACLMessage.AGREE);
+//		     			agree.setContent("agree");
+//		     			return agree;
+//		     		}
+//		     		else {
+//		      // We refuse to perform the action
+//		     			System.out.println("Agent "+getLocalName()+": Refuse");
+//		     			throw new RefuseException("check‐failed");
+//		     		}
+//		    	}
+//		    
+//		    	protected ACLMessage prepareResultNotification(ACLMessage request, ACLMessage response) throws FailureException {
+//		    		if (performAction()) {
+//		    			System.out.println("Agent "+getLocalName()+": Action successfully performed");
+//		    			ACLMessage inform = request.createReply();
+//		    			inform.setPerformative(ACLMessage.INFORM);
+//		    			return inform;
+//		    		}
+//		    		else {
+//		    			System.out.println("Agent "+getLocalName()+": Action failed");
+//		    			throw new FailureException("unexpected‐error");
+//		    		}   
+//		    	}
+//		});
 	}
+		   
+//	private boolean checkAction() {
+//		    // Simulate a check by generating a random number
+//		return (Math.random() > 0.2);
+//	}
+//		   
+//	private boolean performAction() {
+//		    // Simulate action execution by generating a random number
+//		return (Math.random() > 0.2);
+//	}	
 	
-	public void sendMessage(String content,MasterRoutingAgent mra) {
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent(content);
-//		msg.setSender(temp[i].getAgentAMSAgentDescription().getName());
-		msg.addReceiver(mra.getMRA().getAID());
-		this.send(msg);
-	}
 	
 }

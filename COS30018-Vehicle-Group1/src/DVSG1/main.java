@@ -1,104 +1,56 @@
 package DVSG1;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+
+
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Random;
 
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.core.Runtime;
+
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.AMSService;
 import jade.domain.FIPAAgentManagement.AMSAgentDescription;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.lang.acl.ACLMessage;
-import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
+
+import jade.lang.acl.MessageTemplate;
+import jade.proto.AchieveREInitiator;
+import jade.domain.FIPANames;
+import java.util.Date;
+import java.util.Vector;
 
 public class main extends Agent{
-	
+	private int nResponders;
 	DeliveryAgent deliveryAgent = new DeliveryAgent(); 
 	MasterRoutingAgent masterRoutingAgent = new MasterRoutingAgent();
 	LocationAvailable fullLocation = new LocationAvailable();
 	LocationDistance distanceLocation = new LocationDistance();
+	@SuppressWarnings("serial")
 	protected void setup() {
 		Object[] args = getArguments(); // get Arguments pass from the command (DA name)
 		CyclicBehaviour msgReceivingBehaviour = (new CyclicBehaviour(this){
 			public void action() {
-				System.out.println(getLocalName() + ": Waiting for message");
-				ACLMessage msg= receive();
-				if (msg!=null) {
+				
+				ACLMessage msgg= receive();
+				if(msgg == null) {
+					System.out.println(getLocalName() + ": Waiting for message");
+				}
+				if (msgg!=null) {
 					// Print out message content
-					System.out.println(getLocalName()+ ": Received response " +
-						 msg.getContent() + " from " + msg.getSender().getLocalName());
+					System.out.println(getLocalName() + " recieved Message from " + msgg.getSender().getLocalName());
+					System.out.println("Message : " + msgg.getContent() );
 				}
 				// Continue listening
 				block();
 				// This line gets printed since the blocking effect is achieved only after
-				System.out.println(getLocalName() + ": This line is printed");
+				System.out.println("---------------------------------------------------------------------------");
 			}
 		});
 	addBehaviour(msgReceivingBehaviour);
-//		Runtime runtime = Runtime.instance();
-//		Profile profile = new ProfileImpl();
-//		ContainerController container = runtime.createAgentContainer( profile );
-//		
-//		AgentController ac = null;
-//		
-//		try{
-//			for(int i=0;i<args.length;i++) {
-//				Agent agent = new ReceiverAgent();
-//				ac = container.acceptNewAgent(args[i].toString(), agent);
-//				AgentConstraint agentConstraint = new AgentConstraint();
-//				agentConstraint.setAgent(agent);
-//				agentConstraint.setAgentName(args[i].toString());
-//				System.out.println(agentConstraint.getAgentName() + ": " + agentConstraint.getAgent());
-//				deliveryAgent.setListAgentConstraint(agentConstraint);
-//			}
-//			ac.start();
-//		}catch(Exception e){
-//			System.out.println(e);
-//		}
-		
-		
-//		System.out.println("Agent Created!!!!");
-////		AID myID = getAID();
-//		
-////		System.out.println(myID.getName());
-//		List<AgentConstraint> x = deliveryAgent.getListAgentConstraint();
-//		AgentConstraint[] temp = x.toArray(new AgentConstraint[x.size()]);
-//		System.out.print(masterRoutingAgent.getMRA().getLocalName());
-//		for(int i=0;i< temp.length;i++) {
-//			System.out.print(" | " + temp[i].getAgentName());
-//		}
-//		System.out.println();		
-		
-//		ReceiverAgent RA = new ReceiverAgent();
-//		RA.setAgent(masterRoutingAgent.getMRA());
-		
-		
-		
-		
-// this will let MRA start cyclic to keep listening
-		
-//		AgentListener agentListener = new AgentListener();
-//		for(int j=0;j<temp.length;j++) {
-//			ReceiverAgent2 tempRA = new ReceiverAgent2();
-//			agentListener.setReceiverAgent(tempRA);
-//		}
-//		
-//		List<ReceiverAgent2> x1 = agentListener.getReceiverAgent2();
-//		ReceiverAgent2[] temp1 = x1.toArray(new ReceiverAgent2[x1.size()]);
-//		for(int j=0;j<temp1.length;j++) {
-//			temp1[j].setAgent(temp[j].getAgent());
-//		}
-		
 	for(int i=0;i<args.length;i++) {
 		AgentConstraint acc = new AgentConstraint();
 		acc.setAgentName(args[i].toString());
@@ -114,7 +66,6 @@ public class main extends Agent{
 			for(int j=0;j<agents.length;j++) {
 				if(agents[j].getName().getLocalName().equals(deliveryAgent.getListAgentConstraint().get(i).getAgentName())) {
 					deliveryAgent.getListAgentConstraint().get(i).setAgentAMSAgentDescription(agents[j]);
-					System.out.println(agents[j].getName());
 				}
 			}
 		}
@@ -156,6 +107,60 @@ public class main extends Agent{
 	    ex.printStackTrace();
 	}
 	new GUI(deliveryAgent,masterRoutingAgent,distanceLocation,fullLocation);
+	//----------------------------------------------------------------------------------------------//
+//	if(args!= null && args.length > 0) {
+//		ACLMessage trigger = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.CFP));   
+//		if (trigger.getContent().equalsIgnoreCase("start")) {
+//		    
+//		    // Read names of responders as arguments
+//		    if (args != null && args.length > 0) {
+//		    	nResponders = args.length;
+//		    	System.out.println("Requesting dummy‐action to "+nResponders+" responders.");
+//		    	// Fill the REQUEST message
+//		    	ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+//		    	for (int i = 0; i < args.length; ++i) {
+//		    		msg.addReceiver(new AID((String) args[i], AID.ISLOCALNAME));
+//		    	}
+//		    	msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
+//		    	// We want to receive a reply in 10 secs
+//		    	msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
+//		    	msg.setContent("dummy‐action");
+//		    
+//		    	addBehaviour(new AchieveREInitiator(this, msg) {
+//		    		protected void handleInform(ACLMessage inform) {
+//		    			System.out.println("Agent "+inform.getSender().getName()+"successfully performed the requested action");
+//		    		}
+//		    		protected void handleRefuse(ACLMessage refuse) {
+//		    			System.out.println("Agent "+refuse.getSender().getName()+" refused to perform the requested action");
+//		    		nResponders--;
+//		    		}
+//		    		protected void handleFailure(ACLMessage failure) {
+//		    			if (failure.getSender().equals(myAgent.getAMS())) {
+//		    				// FAILURE notification from the JADE runtime: the receiver
+//		    				// does not exist
+//		    				System.out.println("Responder does not exist");
+//		    			}
+//		    			else {
+//		    				System.out.println("Agent "+failure.getSender().getName()+" failed to perform the requested action");
+//		    			}
+//		    		}
+//		    		protected void handleAllResultNotifications(Vector notifications) {
+//		    			if (notifications.size() < nResponders) {
+//		    				// Some responder didn't reply within the specified timeout
+//		    				System.out.println("Timeout expired: missing "+(nResponders - notifications.size())+" responses");
+//		    			}
+//		    		}
+//		    	} );
+//		    }
+//		    else {
+//		    	
+//		    }
+//		    
+//		}
+//	}
+	// ------------------------------------------------------------------------------------------------//
+
+		
 		
 		
 	}
