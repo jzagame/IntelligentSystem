@@ -19,6 +19,7 @@ import jade.lang.acl.ACLMessage;
 
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREInitiator;
+import jade.tools.sniffer.Message;
 import jade.domain.FIPANames;
 import java.util.Date;
 import java.util.Vector;
@@ -37,12 +38,31 @@ public class main extends Agent{
 				
 				ACLMessage msgg= receive();
 				if(msgg == null) {
-					System.out.println(getLocalName() + ": Waiting for message");
+//					System.out.println(getLocalName() + " waiting for message");
+					for(int i=0;i<deliveryAgent.getListAgentConstraint().size();i++) {
+						ACLMessage msg = new ACLMessage(Message.REQUEST);
+						msg.addReceiver(deliveryAgent.getListAgentConstraint().get(i).getAgentAMSAgentDescription().getName());
+						msg.setContent("Please Send Your Capacity Constraint");
+						send(msg);
+					}
 				}
-				if (msgg!=null) {
-					// Print out message content
-					System.out.println(getLocalName() + " recieved Message from " + msgg.getSender().getLocalName());
-					System.out.println("Message : " + msgg.getContent() );
+				if(msgg != null && ACLMessage.getPerformative(msgg.getPerformative()).equals("INFORM")) {
+					System.out.println(getLocalName() + " received capacity Constraint from " + msgg.getSender().getLocalName());
+					System.out.println("Capacity Constraint : " + msgg.getContent());
+					System.out.println("Please wait for route sending");
+				}
+				if(msgg != null && ACLMessage.getPerformative(msgg.getPerformative()).equals("AGREE")) {
+//					if(msgg.getContent().toString() == "agree") {
+//						System.out.println(getLocalName() + " sending message to " + msgg.getSender().getLocalName());
+//						System.out.println("Message : " + msgg.getContent());
+//						ACLMessage reply = msgg.createReply();
+//						reply.setPerformative(Message.INFORM);
+//						for(int i=0;i<deliveryAgent.getListAgentConstraint().size();i++) {
+//							reply.addReceiver(deliveryAgent.getListAgentConstraint().get(i).getAgentAMSAgentDescription().getName());
+//						}
+//						reply.setContent("Acccepted");
+//						send(reply);
+//					}
 				}
 				// Continue listening
 				block();
@@ -69,7 +89,6 @@ public class main extends Agent{
 				}
 			}
 		}
-		System.out.println(getAID().getName());
 	}catch(Exception e) {
 		System.out.println(e);
 		e.printStackTrace();

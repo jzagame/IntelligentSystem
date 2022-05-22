@@ -23,6 +23,16 @@ public class DeliveryAgent extends Agent{
 		return ac;
 	}
 	
+	public List<AgentConstraint> getFreeListAgentConstraint(){
+		List<AgentConstraint> temp = new ArrayList<AgentConstraint>();
+		for(AgentConstraint x:this.getListAgentConstraint()) {
+			if(x.getAgentStatus() == true) {
+				temp.add(x);
+			}
+		}
+		return temp;
+	}
+	
 	public void setListAgentConstraint(AgentConstraint temp) {
 		ac.add(temp);
 	}
