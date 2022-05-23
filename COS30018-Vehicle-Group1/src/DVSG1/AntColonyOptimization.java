@@ -126,7 +126,7 @@ public class AntColonyOptimization {
         int t = random.nextInt(numberOfCities - currentIndex);
         
         if (random.nextDouble() < randomFactor) {
-            OptionalInt cityIndex = IntStream.range(0, numberOfCities)
+            OptionalInt cityIndex = IntStream.range(0, numberOfCities - 2)
                 .filter(i -> i == t && !ant.visited(i))
                 .findFirst();
             if (cityIndex.isPresent()) {
@@ -140,13 +140,14 @@ public class AntColonyOptimization {
         double total = 0;
         for (int i = 0; i < numberOfCities; i++) {
             total += probabilities[i];
+            if(total < 0) break;
             if (total >= r) {
                 return i;
             }
         }
-
-        return 0;
-       // throw new RuntimeException("There are no other cities");
+//
+//        return 123;
+        throw new RuntimeException("There are no other cities");
     }
 
     /**
