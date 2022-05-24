@@ -12,6 +12,7 @@ import jade.lang.acl.ACLMessage;
 
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
+import jade.tools.sniffer.Message;
 import jade.proto.AchieveREInitiator;
 import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
@@ -27,13 +28,23 @@ public class Receiver extends Agent{
 			public void action() {
 				
 				ACLMessage msg= receive();
-				if(msg == null) {
-					System.out.println(getLocalName() + ": Waiting for message");
-				}
-				if (msg!=null) {
+				if ( msg != null && ACLMessage.getPerformative(msg.getPerformative()) == "REQUEST") {
 					// Print out message content
-					System.out.println(getLocalName() + " recieved Message from " + msg.getSender().getLocalName());
+					System.out.println(getLocalName() + " : New Request From " + msg.getSender().getLocalName());
 					System.out.println("Message : " + msg.getContent() );
+//					ACLMessage reply = new ACLMessage(Message.INFORM);
+//					reply.addReceiver(msg.getSender());
+//					send(reply);
+//					System.out.println("Please wait my capacity constraint");
+					
+				}
+				if(msg != null && ACLMessage.getPerformative(msg.getPerformative()) == "INFORM") {
+					System.out.println(getLocalName() + " : Received Route From " + msg.getSender().getLocalName());
+					System.out.println("Route : " + msg.getContent());
+//					ACLMessage reply = msg.createReply();
+//					reply.setPerformative(Message.INFORM);
+//					reply.setContent("Acccepted");
+//					send(reply);
 				}
 				// Continue listening
 				block();
