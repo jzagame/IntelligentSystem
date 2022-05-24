@@ -19,6 +19,27 @@ public class ClusterInformation {
 		return locationRecord;
 	}
 	
+	public void setSendListLocationStatus(List<LocationDetail> temp) {
+		for(LocationDetail x:temp) {
+			for(LocationDetail y:locationRecord) {
+				if(x.getLocationName().equals(y.getLocationName())) {
+					y.setSend(true);
+					break;
+				}
+			}
+		}
+	}
+	
+	public List<LocationDetail> getUnsendListLocationInCluster(){
+		List<LocationDetail> temp = new ArrayList<LocationDetail>();
+		for(LocationDetail x:locationRecord) {
+			if(x.getSend() == false) {
+				temp.add(x);
+			}
+		}
+		return temp;
+	}
+	
 	public String getClusterName() {
 		return clusterName;
 	}
