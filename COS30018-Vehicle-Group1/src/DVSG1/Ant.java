@@ -12,9 +12,11 @@ public class Ant {
 		this.visited = new boolean[numCity];
 	}
 
+	// function of keep track of city that visited 
 	protected void visitCity(int currentIndex, int city) {
-		// keep track of city that visited 
+		// All the visited city for that particular ant object will be store into trail array
 		trail[currentIndex + 1] = city;
+		// All the visited city for that particular ant object will be set to true
 		visited[city] = true;
 	}
 
@@ -22,6 +24,7 @@ public class Ant {
 		return visited[i];
 	}
 
+	// function of keep track of total trail length of particular ant
 	protected double trailLength(int graph[][]) {
 		double length = graph[trail[trailSize - 1]][trail[0]];
 		for (int i = 0; i < trailSize - 1; i++) {

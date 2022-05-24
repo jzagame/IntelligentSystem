@@ -18,10 +18,13 @@ public class AntColonyOptimization {
     
     // percentage of pheromone be evaporated
     private double evaporation = 0.5;
+    
     // total amount of pheromone left on the trail
     private double Q = 500;
+    
     // how many ant used per city
     private double antFactor = 0.8;
+    
     // randomness in simulation
     private double randomFactor = 0.01;
 
@@ -49,13 +52,17 @@ public class AntColonyOptimization {
         graph = travelPrices;
         // graph length equals no of cities
         numberOfCities = graph.length;
+      
         numberOfAnts = (int) (numberOfCities * antFactor);
         
         this.startingCity = startingCity;
         this.targetFitness = targetFitness;
 
+        // route that keep track of pheromone level throughout the iteration
         trails = new double[numberOfCities][numberOfCities];
         probabilities = new double[numberOfCities];
+        
+        // Every of the ant object will assign to number of city
         IntStream.range(0, numberOfAnts)
             .forEach(i -> ants.add(new Ant(numberOfCities)));
 	}
@@ -68,11 +75,11 @@ public class AntColonyOptimization {
 	        .forEach(i -> {
 	            solve();
 	        });
-      //  System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
+        System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
     }
 
     /**
-     * Use this method to run the main logic
+     * Use this method to search for the shortest route
      */
     public int[] solve() {
         setupAnts();
@@ -107,8 +114,10 @@ public class AntColonyOptimization {
      * At each iteration, move ants
      */
     private void moveAnts() {
-        IntStream.range(currentIndex, numberOfCities - 2)
+    	// loop between current Index < NumberOfCities
+        IntStream.range(currentIndex, numberOfCities - 1)
             .forEach(i -> {
+            	// If current Index not equal to number of cities 
             	if(currentIndex != numberOfCities - 2)
             		ants.forEach(ant -> ant.visitCity(currentIndex, selectNextCity(ant)));
             	else ants.forEach(ant -> ant.visitCity(currentIndex, targetFitness));
@@ -122,10 +131,11 @@ public class AntColonyOptimization {
      * Select next city for each ant
      */
     private int selectNextCity(Ant ant) {
-    	// First solution : select based on probability
+    	
+    	// Return number between 0 to (numberOfCities - currentIndex)
         int t = random.nextInt(numberOfCities - currentIndex);
         if (random.nextDouble() < randomFactor) {
-            OptionalInt cityIndex = IntStream.range(0, numberOfCities - 2)
+            OptionalInt cityIndex = IntStream.range(0, numberOfCities)
                 .filter(i -> i == t && !ant.visited(i))
                 .findFirst();
             if (cityIndex.isPresent()) {
@@ -156,7 +166,9 @@ public class AntColonyOptimization {
         double pheromone = 0.0;	
         for (int l = 0; l < numberOfCities; l++) {
             if (!ant.visited(l)) {
-            	// Equation of add pheromone
+            	// Phromone : Sum of all the values of the trails 
+            	// Alpha controls the weightage of pheromone
+            	// Beta controls the weightage of 1 over distance
                 pheromone += Math.pow(trails[i][l], alpha) * Math.pow(1.0 / graph[i][l], beta);
             }
         }
@@ -171,10 +183,11 @@ public class AntColonyOptimization {
     }
 
     /**
-     * Update trails that ants used
+     * Update trails that ants used because ants will be evaporated and deposited
      */
     private void updateTrails() {
         for (int i = 0; i < numberOfCities; i++) {
+        	// evaporate the pheromone by half
             for (int j = 0; j < numberOfCities; j++) {
                 trails[i][j] *= evaporation;
             }
@@ -193,7 +206,7 @@ public class AntColonyOptimization {
     }
 
     /**
-     * Update the best solution
+     * Update the best solution that provide shortest distance 
      */
     private void updateBest() {
         if (bestTourOrder == null) {
@@ -236,6 +249,4 @@ public class AntColonyOptimization {
     public double getBestTour() {
     	return bestTourLength - numberOfCities;
     }
-
-
 }

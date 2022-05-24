@@ -359,6 +359,7 @@ public class GUI {
 							PathOverallSolution pos = new PathOverallSolution();
 							System.out.println("Cluster Name : " + pafec.getAllPossiblePathForCluster().get(i).getClusterName());
 							System.out.println("Agent Name : " + da.getFreeListAgentConstraint().get(i).getAgentName());
+							int ct = 1;
 							for(PathAvailable x:pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster()) {
 								PathOverallSolutionInformation posi = new PathOverallSolutionInformation();
 								
@@ -367,7 +368,7 @@ public class GUI {
 						        SalesmanGenome result = geneticAlgorithm.optimize();
 						        List<LocationDetail> tempL = new ArrayList<LocationDetail>();
 						        
-						        System.out.println("Possible Solution : " + pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster().size());
+						        System.out.println("Possible Solution " + ct + " : "  + pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster().size());
 						        System.out.print("W -> ");
 						        for(int j=0;j<result.getGenome().size();j++) {
 						        	LocationDetail tempL1 = new LocationDetail();
@@ -386,6 +387,7 @@ public class GUI {
 						        
 						        System.out.println("-------------------------------------------");
 						        pos.setPathOverallSolution(posi);
+						        ct++;
 							}
 							pos.setPathOverallSolutionClusterName(pafec.getAllPossiblePathForCluster().get(i).getClusterName());
 							pos.CalculateBestPathForAgent(pos.getPathOverallSolution());
