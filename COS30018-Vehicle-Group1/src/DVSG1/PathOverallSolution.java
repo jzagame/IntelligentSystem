@@ -66,7 +66,7 @@ public class PathOverallSolution {
 			}
 			i++;
 		}
-		// System.out.println("Best Distance : " + tempFitness);
+		System.out.println("Best Distance : " + tempFitness);
 		this.setFitness(tempFitness);
 		this.setBestPathInCluster(pathOverallSolution.get(index).getPathOverallSoluitionInformation());
 	}

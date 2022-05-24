@@ -11,11 +11,9 @@ public class AntColonyOptimization {
 
 	// original number of trails
     private double c = 1.0;
-    
-    // alpha and beta decides the probability can travel to next city
+    // pherom
     private double alpha = 1;
     private double beta = 5;
-    
     // percentage of pheromone be evaporated
     private double evaporation = 0.5;
     // total amount of pheromone left on the trail
@@ -25,7 +23,7 @@ public class AntColonyOptimization {
     // randomness in simulation
     private double randomFactor = 0.01;
 
-    private int maxIterations = 500;
+    private int maxIterations = 10;
 
     private int numberOfCities;
     private int numberOfAnts;
@@ -41,34 +39,32 @@ public class AntColonyOptimization {
     private double bestTourLength;
     
 	public Solution bestSolution;
-	
-	private int startingCity;
-	private int targetFitness;
 
-	public AntColonyOptimization(int[][] travelPrices, int startingCity, int targetFitness){
+    public AntColonyOptimization(int noOfCities, int[][] travelPrices) {
         graph = travelPrices;
         // graph length equals no of cities
         numberOfCities = graph.length;
         numberOfAnts = (int) (numberOfCities * antFactor);
-        
-        this.startingCity = startingCity;
-        this.targetFitness = targetFitness;
 
         trails = new double[numberOfCities][numberOfCities];
         probabilities = new double[numberOfCities];
         IntStream.range(0, numberOfAnts)
             .forEach(i -> ants.add(new Ant(numberOfCities)));
-	}
+    }
+    
+    public double getBestTour() {
+    	return bestTourLength;
+    }
     
     /**
      * Perform ant optimization
      */
     public void startAntOptimization() {
-    	IntStream.rangeClosed(0, maxIterations)
-	        .forEach(i -> {
-	            solve();
-	        });
-      //  System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
+    	IntStream.rangeClosed(1, 5)
+        .forEach(i -> {
+            System.out.println("Attempt #" + i);
+            solve();
+        });
     }
 
     /**
@@ -86,6 +82,9 @@ public class AntColonyOptimization {
                 // update best solution
                 updateBest();
             });
+      
+        System.out.println("Best tour length: " + (bestTourLength - numberOfCities));
+        System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
         return bestTourOrder.clone();
     }
 
@@ -97,7 +96,7 @@ public class AntColonyOptimization {
             .forEach(i -> {
                 ants.forEach(ant -> {
                     ant.clear();
-                    ant.visitCity(-1, startingCity);
+                    ant.visitCity(-1, random.nextInt(numberOfCities));
                 });
             });
         currentIndex = 0;
@@ -107,13 +106,9 @@ public class AntColonyOptimization {
      * At each iteration, move ants
      */
     private void moveAnts() {
-        IntStream.range(currentIndex, numberOfCities - 2)
+        IntStream.range(currentIndex, numberOfCities - 1)
             .forEach(i -> {
-            	if(currentIndex != numberOfCities - 2)
-            		ants.forEach(ant -> ant.visitCity(currentIndex, selectNextCity(ant)));
-            	else ants.forEach(ant -> ant.visitCity(currentIndex, targetFitness));
-            	
-            	//  System.out.println(currentIndex + "\t" + numberOfCities);
+                ants.forEach(ant -> ant.visitCity(currentIndex, selectNextCity(ant)));
                 currentIndex++;
             });
     }
@@ -125,7 +120,7 @@ public class AntColonyOptimization {
     	// First solution : select based on probability
         int t = random.nextInt(numberOfCities - currentIndex);
         if (random.nextDouble() < randomFactor) {
-            OptionalInt cityIndex = IntStream.range(0, numberOfCities - 2)
+            OptionalInt cityIndex = IntStream.range(0, numberOfCities)
                 .filter(i -> i == t && !ant.visited(i))
                 .findFirst();
             if (cityIndex.isPresent()) {
@@ -144,8 +139,7 @@ public class AntColonyOptimization {
             }
         }
 
-        return 0;
-      //  throw new RuntimeException("There are no other cities");
+        throw new RuntimeException("There are no other cities");
     }
 
     /**
@@ -221,21 +215,10 @@ public class AntColonyOptimization {
     }
     
     /**
-     * Return index of location (route)
+     * Return index of location
      */
     public int[] getBest() {
-    	// truncate first and last element of array
-    	int[] original = Arrays.copyOfRange(bestTourOrder, 1, bestTourOrder.length);
-    	int[] modifiedArray = Arrays.copyOf(original, original.length-1);
-    	return modifiedArray;
+    	return bestTourOrder;
     }
-    
-    /**
-     * Return distance 
-     */
-    public double getBestTour() {
-    	return bestTourLength - numberOfCities;
-    }
-
 
 }
