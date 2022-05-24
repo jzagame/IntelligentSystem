@@ -8,25 +8,15 @@ public class AgentConstraint {
 	AMSAgentDescription agentDetail;
 	String AgentName;
 	int TotalItem;
-	boolean status;
 	
 	AgentConstraint(){
 		AgentName = null;
 		TotalItem = 0;
 		agent = null;
-		status = true;
 	}
 	
 	public AMSAgentDescription getAgentAMSAgentDescription() {
 		return agentDetail;
-	}
-	
-	public boolean getAgentStatus() {
-		return status;
-	}
-	
-	public void setAgentStatus(boolean temp) {
-		status = temp;
 	}
 	
 	public void setAgentAMSAgentDescription(AMSAgentDescription temp) {

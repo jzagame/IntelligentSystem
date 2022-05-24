@@ -11,11 +11,9 @@ public class AntColonyOptimization {
 
 	// original number of trails
     private double c = 1.0;
-    
-    // alpha and beta decides the probability can travel to next city
+    // pherom
     private double alpha = 1;
     private double beta = 5;
-    
     // percentage of pheromone be evaporated
     private double evaporation = 0.5;
     // total amount of pheromone left on the trail
@@ -45,7 +43,7 @@ public class AntColonyOptimization {
 	private int startingCity;
 	private int targetFitness;
 
-	public AntColonyOptimization(int[][] travelPrices, int startingCity, int targetFitness){
+    public AntColonyOptimization(int[][] travelPrices, int startingCity, int targetFitness){
         graph = travelPrices;
         // graph length equals no of cities
         numberOfCities = graph.length;
@@ -58,7 +56,7 @@ public class AntColonyOptimization {
         probabilities = new double[numberOfCities];
         IntStream.range(0, numberOfAnts)
             .forEach(i -> ants.add(new Ant(numberOfCities)));
-	}
+    }
     
     /**
      * Perform ant optimization
@@ -68,7 +66,7 @@ public class AntColonyOptimization {
 	        .forEach(i -> {
 	            solve();
 	        });
-      //  System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
+        System.out.println("Best tour order: " + Arrays.toString(bestTourOrder));
     }
 
     /**
@@ -100,7 +98,7 @@ public class AntColonyOptimization {
                     ant.visitCity(-1, startingCity);
                 });
             });
-        currentIndex = 0;
+        currentIndex = startingCity;
     }
 
     /**
@@ -123,7 +121,10 @@ public class AntColonyOptimization {
      */
     private int selectNextCity(Ant ant) {
     	// First solution : select based on probability
+    	
+    	// Generates random integers between 0 to number of city needs to be visited
         int t = random.nextInt(numberOfCities - currentIndex);
+        
         if (random.nextDouble() < randomFactor) {
             OptionalInt cityIndex = IntStream.range(0, numberOfCities - 2)
                 .filter(i -> i == t && !ant.visited(i))
@@ -139,13 +140,14 @@ public class AntColonyOptimization {
         double total = 0;
         for (int i = 0; i < numberOfCities; i++) {
             total += probabilities[i];
+            if(total < 0) break;
             if (total >= r) {
                 return i;
             }
         }
-
-        return 0;
-      //  throw new RuntimeException("There are no other cities");
+//
+//        return 123;
+        throw new RuntimeException("There are no other cities");
     }
 
     /**
@@ -236,6 +238,5 @@ public class AntColonyOptimization {
     public double getBestTour() {
     	return bestTourLength - numberOfCities;
     }
-
 
 }

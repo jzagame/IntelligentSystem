@@ -17,42 +17,8 @@ public class ClusterAvailable {
 		clusterAvailable.add(temp);
 	}
 	
-	public List<ClusterInformation> getClusterAvailablePath() {
-		List<ClusterInformation> temp = new ArrayList<ClusterInformation>();
-		for(ClusterInformation x:clusterAvailable) {
-			if(x.getUnsendListLocationInCluster().size() > 0) {
-				temp.add(x);
-			}
-		}
-		return temp;
-	}
-	
 	public List<ClusterInformation> getClusterAvailable() {
 		return clusterAvailable;
-	}
-	
-	public List<ClusterInformation> getClusterAvailableForPath(){
-		List<ClusterInformation> x = this.getClusterAvailablePath();
-		Collections.sort(x, new Comparator<ClusterInformation>() {
-			@Override
-			public int compare(ClusterInformation o1, ClusterInformation o2) {
-				// TODO Auto-generated method stub
-				return o1.getTotalParcelInCluster() > o2.getTotalParcelInCluster() ? -1 : o1.getTotalParcelInCluster() == o2.getTotalParcelInCluster() ? 0:1;
-			}	
-		});
-		return x;
-	}
-	
-	public List<ClusterInformation> getClusterAvaiableSortedForPath() {
-		List<ClusterInformation> x = this.getClusterAvailableForPath();
-		Collections.sort(x, new Comparator<ClusterInformation>() {
-			@Override
-			public int compare(ClusterInformation o1, ClusterInformation o2) {
-				// TODO Auto-generated method stub
-				return o1.getTotalParcelInCluster() > o2.getTotalParcelInCluster() ? -1 : o1.getTotalParcelInCluster() == o2.getTotalParcelInCluster() ? 0:1;
-			}	
-		});
-		return x;
 	}
 	
 	public List<ClusterInformation> getClusterAvaiableSorted() {

@@ -39,6 +39,8 @@ public class GeneratePossiblePath {
 			}
 		}
 		InnerGenerateClusterPossiblePath(outerLoopList,InnerLoopList,ParcelConstraint,size);
+//		GenerateClusterPossiblePath(outerLoopList,InnerGenerateClusterPossiblePath(outerLoopList,
+//				InnerLoopList,ParcelConstraint),ParcelConstraint,size);
 		return null;
 	}
 	

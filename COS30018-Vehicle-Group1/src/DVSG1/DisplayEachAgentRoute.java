@@ -6,33 +6,36 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 
 public class DisplayEachAgentRoute extends JPanel{
+	ClusterInformation ci;
 	String abc;
-	List<LocationDetail> pos;
+	PathOverallSolution pos;
+	ClusterAvailable CA;
 	DisplayEachAgentRoute(){
-		pos = new ArrayList<LocationDetail>();
+		ci = new ClusterInformation();
+		pos = new PathOverallSolution();
 	}
 	
-	public void PrintAgentMap(List<LocationDetail> temp) {
+	public void PrintAgentMap(PathOverallSolution temp,ClusterInformation temp1) {
 		abc = "asdsa";
 		pos = temp;
+		ci = temp1;
+		System.out.println("Check A");
 		paintComponent(this.getGraphics());
 	}
 	
 	public void paintComponent(Graphics g) {
+		System.out.println("Check B");
         super.paintComponent(g);
         Color[] color = {Color.BLACK,Color.BLUE,Color.MAGENTA,Color.RED};
         boolean flagX = false;
         boolean flagY = false;
-        int wareX = 400;
-        int wareY = 250;
         if(abc != null) {
-        	for(LocationDetail x:pos) {
+        	for(LocationDetail x:ci.getListLocationInCluster()) {
             	int X = x.getLocationX();
             	int Y = x.getLocationY();
             	if(X >= 400) {
@@ -46,48 +49,24 @@ public class DisplayEachAgentRoute extends JPanel{
             	Graphics2D g2d = (Graphics2D) g;
     			g2d.setColor(color[0]);
              	g2d.drawString(x.getLocationName(), X, Y+20);
-                g2d.fillOval(X,Y, 5, 5);
+                g2d.fillOval(X-2,Y+20, 5, 5);
 
             }
-        	for(int i=0;i<pos.size();i++) {
-        		Graphics2D g1d = (Graphics2D) g;
-             	g1d.setColor(color[0]);
-        		int X = pos.get(i).getLocationX();
-            	int Y = pos.get(i).getLocationY();
-            	if(X >= 400) {
-            		flagX = true;
-            		X = X-400;
-            		wareX = 0;
-            	}
-            	if(Y >= 250) {
-            		flagY = true;
-            		Y = Y - 250;
-            		wareY = 0;
-            	}
-            	if(i == 0) {
-            		g1d.drawLine(wareX, wareY, X, Y);
-            	}
-            	if(i+1 != pos.size()) {
-            		int Xnext = pos.get(i+1).getLocationX();
-            		int Ynext = pos.get(i+1).getLocationY();
-            		if(Xnext >= 400) {
-                		Xnext = Xnext - 400;
-                	}
-                	if(Ynext >= 250) {
-                		Ynext = Ynext - 250;
-                	}
-                	g1d.drawLine(X, Y, Xnext, Ynext);
-            	}else {
-            		
-            		g1d.drawLine(wareX, wareY, X, Y);
-            	}
-            	
-        	}
         }
+        
+        int wareX = 400;
+        int wareY = 250;
+        if(flagX == true) {
+        	wareX = 0;
+        }
+        if(flagY == true) {
+        	wareY = 0;
+        }
+        
         super.setPreferredSize(new Dimension(450,300));
         Graphics2D g2dd = (Graphics2D) g;
         g2dd.setColor(Color.BLACK);
-    	g2dd.drawString("warehouse", wareX,  wareY);
+    	g2dd.drawString("warehouse", wareX,  wareY +20);
         g2dd.fillRect(wareX, wareY, 10, 10);
 //        g.drawLine(100, 100, 200, 200); 
 //        g2d.translate(100.0, 100.0); 
