@@ -6,10 +6,10 @@ public class Ant {
 	protected int trail[];
 	protected boolean visited[];
 
-	public Ant(int tourSize) {
-		this.trailSize = tourSize;
-		this.trail = new int[tourSize];
-		this.visited = new boolean[tourSize];
+	public Ant(int numCity) {
+		this.trailSize = numCity;
+		this.trail = new int[numCity];
+		this.visited = new boolean[numCity];
 	}
 
 	protected void visitCity(int currentIndex, int city) {
