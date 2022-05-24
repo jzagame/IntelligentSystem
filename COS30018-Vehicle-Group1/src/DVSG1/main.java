@@ -1,8 +1,5 @@
 package DVSG1;
 
-
-
-
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -47,13 +44,9 @@ public class main extends Agent{
 					}
 				}
 				if(msgg != null && ACLMessage.getPerformative(msgg.getPerformative()).equals("INFORM")) {
-					if(msgg.getContent().equals("Done")) {
-						System.out.println(getLocalName() + " received " + msgg.getSender().getLocalName() + " already done!!");
-					}else {
-						System.out.println(getLocalName() + " received capacity Constraint from " + msgg.getSender().getLocalName());
-						System.out.println("Capacity Constraint : " + msgg.getContent());
-						System.out.println("Please wait for route sending");
-					}
+					System.out.println(getLocalName() + " received capacity Constraint from " + msgg.getSender().getLocalName());
+					System.out.println("Capacity Constraint : " + msgg.getContent());
+					System.out.println("Please wait for route sending");
 				}
 				if(msgg != null && ACLMessage.getPerformative(msgg.getPerformative()).equals("AGREE")) {
 //					if(msgg.getContent().toString() == "agree") {
@@ -67,11 +60,6 @@ public class main extends Agent{
 //						reply.setContent("Acccepted");
 //						send(reply);
 //					}
-				}
-				if(msgg != null && ACLMessage.getPerformative(msgg.getPerformative()).equals("REFUSE")) {
-					System.out.println(getLocalName() + " : " + msgg.getSender().getLocalName() + " refuse to accept job " );
-					System.out.println("Capacity Constraint : " + msgg.getContent());
-					System.out.println("Please resend capacity constraint if want to receive route");
 				}
 				// Continue listening
 				block();

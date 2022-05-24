@@ -26,7 +26,7 @@ public class DeliveryAgent extends Agent{
 	public List<AgentConstraint> getFreeListAgentConstraint(){
 		List<AgentConstraint> temp = new ArrayList<AgentConstraint>();
 		for(AgentConstraint x:this.getListAgentConstraint()) {
-			if(x.getAgentStatus() == true && x.getTotalItem() > 0) {
+			if(x.getAgentStatus() == true) {
 				temp.add(x);
 			}
 		}
