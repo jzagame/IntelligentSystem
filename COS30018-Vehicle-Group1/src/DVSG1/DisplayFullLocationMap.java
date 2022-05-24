@@ -59,6 +59,7 @@ public class DisplayFullLocationMap extends JPanel{
         	}
         	
         	index = 0;
+        	int total = 0;
         	for(PathOverallSolution a:posfec.getPathOverallSolutionForEachCluster()) {
         		Graphics2D g1d = (Graphics2D) g;
         		Color tempColor = null;
@@ -70,9 +71,11 @@ public class DisplayFullLocationMap extends JPanel{
         		}
         		g1d.setColor(tempColor);
         		g1d.drawLine(400, 250, a.getBestPathInCluster().get(0).getLocationX(), a.getBestPathInCluster().get(0).getLocationY());
+        		
         		for(int i=0;i<a.getBestPathInCluster().size();i++) {
                  	Graphics2D g2d = (Graphics2D) g;
                  	g2d.setColor(tempColor);
+            
                     if( (i+1) != a.getBestPathInCluster().size()) {
                     	g2d.drawLine(a.getBestPathInCluster().get(i).getLocationX(), a.getBestPathInCluster().get(i).getLocationY(), 
                         		a.getBestPathInCluster().get(i+1).getLocationX(), a.getBestPathInCluster().get(i+1).getLocationY());
@@ -91,13 +94,17 @@ public class DisplayFullLocationMap extends JPanel{
                     		costy =  a.getBestPathInCluster().get(i).getLocationY() - ( y /2);
                     	}
                     	g2d.drawString("cost : " +String.valueOf(x+y), costx, costy);
+                    	total += (x+y);
                     }else {
                     	g1d.drawLine(400, 250, a.getBestPathInCluster().get(i).getLocationX(), a.getBestPathInCluster().get(i).getLocationY());
                     }  
+                    
                  }
         		index++;
         	}
+//        	System.out.println("Total Distance : " + total);
         }
+       
         
         
         super.setPreferredSize(new Dimension(810,620));

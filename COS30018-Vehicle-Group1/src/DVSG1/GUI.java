@@ -293,7 +293,7 @@ public class GUI {
 				
 				for(int i=0;i<fl.getAvailableLocationDetail().size();i++) {
 					Random rand = new Random();
-					fl.getAvailableLocationDetail().get(i).setTotalParcel(rand.nextInt(9) + 1);// give random parcel for every location 
+					fl.getAvailableLocationDetail().get(i).setTotalParcel(10);//rand.nextInt(9) + 1 give random parcel for every location 
 				}
 				ca.getClusterAvaiableSorted().get(0).CalculateClusterTotalItem();
 				ca.getClusterAvaiableSorted().get(1).CalculateClusterTotalItem();
@@ -359,7 +359,6 @@ public class GUI {
 							PathOverallSolution pos = new PathOverallSolution();
 							System.out.println("Cluster Name : " + pafec.getAllPossiblePathForCluster().get(i).getClusterName());
 							System.out.println("Agent Name : " + da.getFreeListAgentConstraint().get(i).getAgentName());
-							int ct = 1;
 							for(PathAvailable x:pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster()) {
 								PathOverallSolutionInformation posi = new PathOverallSolutionInformation();
 								
@@ -368,7 +367,7 @@ public class GUI {
 						        SalesmanGenome result = geneticAlgorithm.optimize();
 						        List<LocationDetail> tempL = new ArrayList<LocationDetail>();
 						        
-						        System.out.println("Possible Solution " + ct + " : "  + pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster().size());
+						        System.out.println("Possible Solution : " + pafec.getAllPossiblePathForCluster().get(i).getPossiblePathOfEachCluster().size());
 						        System.out.print("W -> ");
 						        for(int j=0;j<result.getGenome().size();j++) {
 						        	LocationDetail tempL1 = new LocationDetail();
@@ -387,7 +386,6 @@ public class GUI {
 						        
 						        System.out.println("-------------------------------------------");
 						        pos.setPathOverallSolution(posi);
-						        ct++;
 							}
 							pos.setPathOverallSolutionClusterName(pafec.getAllPossiblePathForCluster().get(i).getClusterName());
 							pos.CalculateBestPathForAgent(pos.getPathOverallSolution());
@@ -411,9 +409,12 @@ public class GUI {
 					JOptionPane.showMessageDialog(btnGenerateGARoute, "No Agent , Please Wait for Agent done","Alert",2);
 				}
 				// TODO Auto-generated method stub
-//				pafec.PrintAllPossiblePathForClusterDetail();			
-//				pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();		
+//				pafec.PrintAllPossiblePathForClusterDetail();
+				
+//				pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();
+				
 			}
+			
 		});
 		
 		btnGenerateACORoute.addActionListener(new ActionListener() {
@@ -489,7 +490,10 @@ public class GUI {
 	//			pafec.PrintAllPossiblePathForClusterDetail();
 	//			pafec.getAllPossiblePathForCluster().get(0).getPossiblePathOfEachCluster().get(0).PrintDistanceMatrix();
 			}
+			
+			
 		});
+		
 	}
 	
 	
