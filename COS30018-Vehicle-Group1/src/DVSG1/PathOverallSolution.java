@@ -43,16 +43,6 @@ public class PathOverallSolution {
 		return clusterName;
 	}
 	
-	public String getBestPathString() {
-		String temp = null;
-		for(LocationDetail x:bestPathInCluster) {
-			temp += x.getLocationName() + " -> ";
-		}
-		temp += "W";
-		
-		return temp;
-	}
-	
 	public void CalculateBestPathForAgent(List<PathOverallSolutionInformation> temp) {
 		int i = 0;
 		int index = 0;
@@ -73,7 +63,7 @@ public class PathOverallSolution {
 	
 	public void PrintBestPathDetail() {
 		for(LocationDetail x:bestPathInCluster) {
-			System.out.print(x.getLocationName() + " ");
+			System.out.print(x.getLocationName() + " -> ");
 		}
 		System.out.println("");
 	}
