@@ -27,7 +27,7 @@ public class UberSalesmensch {
 
         generationSize = 5000;
         reproductionSize = 200;
-        maxIterations = 1000;
+        maxIterations = 200;
         mutationRate = 0.5f;
         tournamentSize = 40;
     }

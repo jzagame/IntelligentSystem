@@ -63,6 +63,7 @@ public class GUI {
 		JButton[] btnsend = new JButton[size];
 		JButton[] btnReceived = new JButton[size];
 		JButton[] btnDone = new JButton[size];
+		JButton[] btnReject = new JButton[size];
 		Box[] b = new Box[size]; // box to add all panel
 		Dimension expectedDimension = new Dimension(500, 300); // set panel size fixed
 		DisplayEachAgentRoute[] displayEachAgentRoute = new DisplayEachAgentRoute[size];
@@ -84,27 +85,33 @@ public class GUI {
 			btnsend[i] = new JButton("Send");
 			btnReceived[i] = new JButton("Accept");
 			btnDone[i] = new JButton("Done");
+			btnReject[i] = new JButton("Reject");
 			
 			btnsend[i].setName("Send");
 			btnReceived[i].setName("Accept");
 			btnDone[i].setName("Done");
+			btnReject[i].setName("Reject");
 			
 			btnsend[i].setActionCommand(temp[i].getAgentName());
 			btnReceived[i].setActionCommand(temp[i].getAgentName());
 			btnDone[i].setActionCommand(temp[i].getAgentName());
+			btnReject[i].setActionCommand(temp[i].getAgentName());
 			
 			btnDone[i].setEnabled(false);
 			btnReceived[i].setEnabled(false);
+			btnReject[i].setEnabled(false);
 			
 			p[i].add(txt[i]);
 			p[i].add(btnsend[i]);
 			p[i].add(btnReceived[i]);
+			p[i].add(btnReject[i]);
 			p[i].add(btnDone[i]);
 			
 			b[i].add(p[i]);
 			b[i].add(displayEachAgentRoute[i]);
 			b[i].add(Box.createVerticalGlue());
 			
+			buttonDA.add(btnReject[i]);
 			buttonDA.add(btnsend[i]);
 			buttonDA.add(btnReceived[i]);
 			buttonDA.add(btnDone[i]);
@@ -145,6 +152,7 @@ public class GUI {
 					for(int i=0;i< size;i++) {
 						if(temp[i].getAgentName() == e.getActionCommand()) {
 							btnReceived[i].setEnabled(false);
+							btnReject[i].setEnabled(false);
 							btnDone[i].setEnabled(true);
 							ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 							msg.setContent("Accept");
@@ -173,6 +181,41 @@ public class GUI {
 		}
 		
 		for(int i=0;i<size;i++) {
+			btnReject[i].addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					for(int i=0;i< size;i++) {
+						if(temp[i].getAgentName() == e.getActionCommand()) {
+							btnReceived[i].setEnabled(false);
+							btnReject[i].setEnabled(false);
+							btnsend[i].setEnabled(false);
+							ACLMessage msg = new ACLMessage(Message.REFUSE);
+							msg.setContent("Bye i dont want see you");
+							msg.addReceiver(mra.getMRA().getAID());
+							msg.setSender(temp[i].getAgentAMSAgentDescription().getName());
+							mra.getMRA().send(msg);
+							for(AgentConstraint a:da.getAgentConstraintSorted()) {
+								if(a.getAgentName().equals(temp[i].getAgentName())) {
+									a.setAgentStatus(true);
+									a.setTotalItem(0);
+									break;
+								}
+							}
+							for(int j=0;j<pata.size();j++) {
+								if(pata.get(j).getAgentName().equals(temp[i].getAgentName())) {
+									pata.remove(j);
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+			});
+		}
+		
+		for(int i=0;i<size;i++) {
 			btnDone[i].addActionListener(new ActionListener() {
 
 				@Override
@@ -180,6 +223,11 @@ public class GUI {
 					// TODO Auto-generated method stub
 					for(int i=0;i<size;i++) {
 						if(temp[i].getAgentName() == e.getActionCommand()) {
+							ACLMessage msg = new ACLMessage(Message.INFORM);
+							msg.setContent("Done");
+							msg.setSender(temp[i].getAgentAMSAgentDescription().getName());
+							msg.addReceiver(mra.getMRA().getAID());
+							mra.getMRA().send(msg);
 							temp[i].setAgentStatus(true);
 							btnDone[i].setEnabled(false);
 							for(int j=0;j<pata.size();j++) {
@@ -268,13 +316,19 @@ public class GUI {
 					msg.setContent(posfec.getPathOverallSolutionForEachCluster().get(i).getBestPathString());
 					msg.setSender(mra.getMRA().getAID());
 					mra.getMRA().send(msg);
+					if(pafec.getAllPossiblePathForCluster().size() == (i+1)) {
+						break;
+					}
 				}
 				btnGenerateGARoute.setEnabled(true);
 				btnGenerateACORoute.setEnabled(true);
 				btnSend.setEnabled(false);
-				for(AgentConstraint p:da.getFreeListAgentConstraint()) {
+				for(PathAssignToAgent p:pata) {
 					for(JButton x:buttonDA) {
 						if(x.getName().equals("Accept") && x.getActionCommand().equals(p.getAgentName())) {
+							x.setEnabled(true);
+						}
+						if(x.getName().equals("Reject") && x.getActionCommand().equals(p.getAgentName())) {
 							x.setEnabled(true);
 						}
 					}
@@ -297,6 +351,7 @@ public class GUI {
 					int sizeAgent = da.getFreeListAgentConstraint().size();
 					int loop = sizeCluster;
 					if(sizeCluster > sizeAgent) {
+						System.out.println(sizeCluster + ":" + sizeAgent);
 						loop = sizeAgent;
 					}
 					try {
@@ -436,7 +491,7 @@ public class GUI {
 			System.out.println("-----------------------------------------------------------------------");
 			for(ClusterInformation x:ca.getClusterAvaiableSortedForPath()) { 
 				//command here for backup, just for check every cluster detail
-//				
+				System.out.println( i + " : here");
 				GeneratePossiblePath ga = new GeneratePossiblePath();
 				PossiblePathOfEachCluster ppoec = new PossiblePathOfEachCluster();
 				List<LocationDetail> temp = new ArrayList<LocationDetail>(x.getUnsendListLocationInCluster());
@@ -447,7 +502,7 @@ public class GUI {
 				ppoec.setPossiblePathOfEachCluster(ga.getLocationAvailableForEachCluster(),x.getClusterName());
 				pafec.setAllPossiblePathForCluster(ppoec);
 				i++;
-				if(i == da.getFreeListAgentConstraint().size()) {
+				if(i == da.getFreeListAgentConstraint().size() ) {
 					break;
 				}
 			}
